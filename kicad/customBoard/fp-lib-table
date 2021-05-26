@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name "digikey-footprints")(type "KiCad")(uri "D:/Documents/KiCAD/Libraries/digikey-kicad-library/digikey-footprints.pretty")(options "")(descr ""))
+  (lib (name "trinamic-footprints")(type "KiCad")(uri "D:/Documents/KiCAD/Libraries/digikey-partner-kicad-library/Trinamic/trinamic-footprints.pretty")(options "")(descr ""))
+)
