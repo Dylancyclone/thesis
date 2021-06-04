@@ -1,0 +1,9 @@
+USB C Breakout
+https://www.sparkfun.com/products/15100
+
+DSI vs HDMI
+DSI Has extremely limited support (1 screen outside of the official implementation, locked at 800x480) and the format is closed so its hard for new ones to be made. DSI is more power efficient, and built in touch support, but lower resolution (480p). HDMI is a more generic standard, but small screens are expensive.
+https://raspberrypi.stackexchange.com/questions/88075/hdmi-vs-dsi-pros-and-cons
+
+Probably don't need an RTC for the pi if it syncs upon startup. Might also need a kernal patch that is built for rasbian that would have to be rewritten for arch
+https://www.raspberrypi.org/forums/viewtopic.php?t=293632
