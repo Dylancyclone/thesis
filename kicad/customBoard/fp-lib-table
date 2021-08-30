@@ -1,4 +1,8 @@
 (fp_lib_table
   (lib (name "digikey-footprints")(type "KiCad")(uri "D:/Documents/KiCAD/Libraries/digikey-kicad-library/digikey-footprints.pretty")(options "")(descr ""))
   (lib (name "trinamic-footprints")(type "KiCad")(uri "D:/Documents/KiCAD/Libraries/digikey-partner-kicad-library/Trinamic/trinamic-footprints.pretty")(options "")(descr ""))
+  (lib (name "USB4125-GF-A_REVA2")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/USB4125-GF-A_REVA2")(options "")(descr ""))
+  (lib (name "JSTPH2")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/JSTPH2")(options "")(descr ""))
+  (lib (name "TPS61090RSAR")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/TPS61090RSAR")(options "")(descr ""))
+  (lib (name "MMUN2133LT1G")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/MMUN2133LT1G")(options "")(descr ""))
 )

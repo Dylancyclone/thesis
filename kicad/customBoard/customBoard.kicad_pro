@@ -406,6 +406,15 @@
     "subpart_first_id": 65,
     "subpart_id_separator": 0
   },
-  "sheets": [],
+  "sheets": [
+    [
+      "b577ba12-6ddd-475e-9a2e-413f57642608",
+      ""
+    ],
+    [
+      "0c974e73-b59e-405a-99e5-7443dbdc8f12",
+      "power"
+    ]
+  ],
   "text_variables": {}
 }
