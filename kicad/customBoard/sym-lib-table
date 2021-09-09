@@ -157,4 +157,7 @@
   (lib (name "custom")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/custom/custom.kicad_sym")(options "")(descr ""))
   (lib (name "TPS61090RSAR")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/TPS61090RSAR/TPS61090RSAR.lib")(options "")(descr ""))
   (lib (name "MMUN2133LT1G")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/MMUN2133LT1G/MMUN2133LT1G.lib")(options "")(descr ""))
+  (lib (name "CM4IO")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/CM4IO.pretty/CM4IO.kicad_sym")(options "")(descr ""))
+  (lib (name "rt9742ggj5")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/rt9742ggj5/rt9742ggj5.kicad_sym")(options "")(descr ""))
+  (lib (name "ARJM11D7-502-AB-EW2")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/ARJM11D7-502-AB-EW2/ARJM11D7-502-AB-EW2.lib")(options "")(descr ""))
 )

@@ -1448,7 +1448,7 @@
     (uuid b173a2d0-20c0-41d9-9a07-42033447a753)
   )
 
-  (hierarchical_label "5V" (shape input) (at 177.8 101.6 0)
+  (hierarchical_label "5V" (shape output) (at 177.8 101.6 0)
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid 9cdbf204-09e7-4bd9-adec-26683920e34f)
   )
