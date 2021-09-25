@@ -7,4 +7,6 @@
   (lib (name "MMUN2133LT1G")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/MMUN2133LT1G")(options "")(descr ""))
   (lib (name "CM4IO")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/CM4IO.pretty")(options "")(descr ""))
   (lib (name "ARJM11D7-502-AB-EW2")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/ARJM11D7-502-AB-EW2")(options "")(descr ""))
+  (lib (name "SS-53000-001")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/SS-53000-001")(options "")(descr ""))
+  (lib (name "FFC3B07-20-T")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/FFC3B07-20-T")(options "")(descr ""))
 )

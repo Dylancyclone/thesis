@@ -160,4 +160,6 @@
   (lib (name "CM4IO")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/CM4IO.pretty/CM4IO.kicad_sym")(options "")(descr ""))
   (lib (name "rt9742ggj5")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/rt9742ggj5/rt9742ggj5.kicad_sym")(options "")(descr ""))
   (lib (name "ARJM11D7-502-AB-EW2")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/ARJM11D7-502-AB-EW2/ARJM11D7-502-AB-EW2.lib")(options "")(descr ""))
+  (lib (name "SS-53000-001")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/SS-53000-001/SS-53000-001.lib")(options "")(descr ""))
+  (lib (name "FFC3B07-20-T")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/FFC3B07-20-T/FFC3B07-20-T.lib")(options "")(descr ""))
 )
