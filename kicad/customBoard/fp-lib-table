@@ -9,4 +9,7 @@
   (lib (name "ARJM11D7-502-AB-EW2")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/ARJM11D7-502-AB-EW2")(options "")(descr ""))
   (lib (name "SS-53000-001")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/SS-53000-001")(options "")(descr ""))
   (lib (name "FFC3B07-20-T")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/FFC3B07-20-T")(options "")(descr ""))
+  (lib (name "USB2504A-JT")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/USB2504A-JT")(options "")(descr ""))
+  (lib (name "AP22653W6-7")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/AP22653W6-7")(options "")(descr ""))
+  (lib (name "SS-52100-001")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/SS-52100-001")(options "")(descr ""))
 )

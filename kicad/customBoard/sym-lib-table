@@ -162,4 +162,7 @@
   (lib (name "ARJM11D7-502-AB-EW2")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/ARJM11D7-502-AB-EW2/ARJM11D7-502-AB-EW2.lib")(options "")(descr ""))
   (lib (name "SS-53000-001")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/SS-53000-001/SS-53000-001.lib")(options "")(descr ""))
   (lib (name "FFC3B07-20-T")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/FFC3B07-20-T/FFC3B07-20-T.lib")(options "")(descr ""))
+  (lib (name "USB2504A-JT")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/USB2504A-JT/USB2504A-JT.lib")(options "")(descr ""))
+  (lib (name "AP22653W6-7")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/AP22653W6-7/AP22653W6-7.lib")(options "")(descr ""))
+  (lib (name "SS-52100-001")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/SS-52100-001/SS-52100-001.lib")(options "")(descr ""))
 )
