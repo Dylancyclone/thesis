@@ -165,4 +165,5 @@
   (lib (name "USB2504A-JT")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/USB2504A-JT/USB2504A-JT.lib")(options "")(descr ""))
   (lib (name "AP22653W6-7")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/AP22653W6-7/AP22653W6-7.lib")(options "")(descr ""))
   (lib (name "SS-52100-001")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/SS-52100-001/SS-52100-001.lib")(options "")(descr ""))
+  (lib (name "NRS5030T6R8MMGJ")(type "Legacy")(uri "D:/Documents/Git/thesis/kicad/library/NRS5030T6R8MMGJ/NRS5030T6R8MMGJ.lib")(options "")(descr ""))
 )

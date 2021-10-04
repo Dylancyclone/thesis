@@ -12,4 +12,5 @@
   (lib (name "USB2504A-JT")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/USB2504A-JT")(options "")(descr ""))
   (lib (name "AP22653W6-7")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/AP22653W6-7")(options "")(descr ""))
   (lib (name "SS-52100-001")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/SS-52100-001")(options "")(descr ""))
+  (lib (name "NRS5030T6R8MMGJ")(type "KiCad")(uri "D:/Documents/Git/thesis/kicad/library/NRS5030T6R8MMGJ")(options "")(descr ""))
 )
