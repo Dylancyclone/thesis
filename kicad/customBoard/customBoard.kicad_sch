@@ -497,13 +497,13 @@
       (reference "J5") (unit 1) (value "ARJM11D7-502-AB-EW2") (footprint "ARJM11D7-502-AB-EW2:ARJM11D7502ABEW2")
     )
     (path "/35dcb52f-0e89-4aa1-a3e7-99ff2d36bc2d/fa86f062-c2f4-4b57-8445-1c6d1aa9b2cb"
-      (reference "J6") (unit 1) (value "SS-52100-001") (footprint "CONN15_2100-001_STW")
+      (reference "J6") (unit 1) (value "SS-52100-001") (footprint "SS-52100-001:SS-52100-001")
     )
     (path "/35dcb52f-0e89-4aa1-a3e7-99ff2d36bc2d/5af506c2-50db-4774-b1d8-22cea94d1ddb"
-      (reference "J7") (unit 1) (value "SS-52100-001") (footprint "CONN15_2100-001_STW")
+      (reference "J7") (unit 1) (value "SS-52100-001") (footprint "SS-52100-001:SS-52100-001")
     )
     (path "/35dcb52f-0e89-4aa1-a3e7-99ff2d36bc2d/b3e8bbf3-7226-45ea-b41b-ee6a97455d22"
-      (reference "J8") (unit 1) (value "SS-52100-001") (footprint "CONN15_2100-001_STW")
+      (reference "J8") (unit 1) (value "SS-52100-001") (footprint "SS-52100-001:SS-52100-001")
     )
     (path "/35dcb52f-0e89-4aa1-a3e7-99ff2d36bc2d/b5ff5fa6-4c08-47fc-84c0-da4bfcd62ca0"
       (reference "J9") (unit 1) (value "FFC3B07-20-T") (footprint "FFC3B07-20-T:GCT_FFC3B07-20-T")
@@ -611,7 +611,7 @@
       (reference "U7") (unit 1) (value "TPD4EUSB30") (footprint "Package_SON:USON-10_2.5x1.0mm_P0.5mm")
     )
     (path "/35dcb52f-0e89-4aa1-a3e7-99ff2d36bc2d/6488d199-d889-4269-9ba1-502c7b59d358"
-      (reference "U8") (unit 1) (value "USB2504A-JT") (footprint "TQFP64_10x10MC_MCH")
+      (reference "U8") (unit 1) (value "USB2504A-JT") (footprint "USB2504A-JT:USB2504A-JT")
     )
     (path "/35dcb52f-0e89-4aa1-a3e7-99ff2d36bc2d/6472c4e3-9dab-43ca-8a6e-71f86f3ba871"
       (reference "U9") (unit 1) (value "AP22653W6-7") (footprint "AP22653W6-7:SOT95P280X145-6N")
