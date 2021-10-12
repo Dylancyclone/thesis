@@ -432,6 +432,8 @@
         "microvia_drill": 0.3302,
         "name": "USB Data",
         "nets": [
+          "/CM4/USB2_N",
+          "/CM4/USB2_P",
           "/USB/D1_N",
           "/USB/D1_P",
           "/USB/D2_N",

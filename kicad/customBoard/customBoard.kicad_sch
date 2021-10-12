@@ -418,9 +418,6 @@
     (path "/35dcb52f-0e89-4aa1-a3e7-99ff2d36bc2d/cb40e799-30b2-4bdf-8ce0-0a295ac7f992"
       (reference "C11") (unit 1) (value "10u") (footprint "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder")
     )
-    (path "/35dcb52f-0e89-4aa1-a3e7-99ff2d36bc2d/c4a146ce-a726-4a19-b61d-66994a6086b0"
-      (reference "C12") (unit 1) (value "100n") (footprint "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder")
-    )
     (path "/35dcb52f-0e89-4aa1-a3e7-99ff2d36bc2d/33905c54-5dca-496d-8a50-40da822867b0"
       (reference "C13") (unit 1) (value "100n") (footprint "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder")
     )
