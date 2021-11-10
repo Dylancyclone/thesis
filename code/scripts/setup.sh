@@ -1,12 +1,13 @@
 #!/usr/bin/env sh
 
-case "$(uname -r)" in
-    *MANJARO*) ;;
-    *)
-        echo "This script must be run on Manjaro"
-        exit 1
-    ;;
-esac
+# The following does not work on WSL2, even in the distro is Manjaro
+# case "$(uname -r)" in
+#     *MANJARO*) ;;
+#     *)
+#         echo "This script must be run on Manjaro"
+#         exit 1
+#     ;;
+# esac
 
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; cd .. ; pwd -P )
 
