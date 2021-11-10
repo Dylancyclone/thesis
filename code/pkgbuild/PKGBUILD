@@ -1,0 +1,30 @@
+pkgname=moonlight-embedded
+pkgver=2.4.11
+pkgrel=1
+pkgdesc="Gamestream client for embedded devices"
+arch=('aarch64')
+url="https://github.com/irtimmer/moonlight-embedded"
+license=('GPL')
+depends=('curl' 'avahi' 'curl' 'libevdev' 'enet' 'ffmpeg')
+makedepends=('libcec')
+makedepends_armv7h=('raspberrypi-firmware-tools' 'imx-vpu' 'linux-imx6-headers' 'v4l-utils' 'aml-libs-c1')
+makedepends_armv6h=('raspberrypi-firmware-tools')
+optdepends=('raspberrypi-firmware-tools: Raspberry Pi support'
+            'imx-vpu: i.MX6 support'
+            'aml-libs-c1: ODROID-C1 support'
+            'libcec: CEC support')
+makedepends=('cmake')
+source=(moonlight.tar)
+sha256sums=('4a907a583f6a3b625a70b150630ccca4a20cd79b821e734086c963966e13bb53')
+
+build() {
+  mkdir -p "${srcdir}/build"
+  cd "${srcdir}/build"
+  cmake ../moonlight -DCMAKE_INSTALL_LIBDIR=/usr/lib -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_BUILD_TYPE=Release
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="$pkgdir/" install
+}

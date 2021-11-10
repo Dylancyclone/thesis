@@ -1,0 +1,25 @@
+# See /boot/overlays/README for all available options
+
+#gpu_mem=64
+initramfs initramfs-linux.img followkernel
+kernel=kernel8.img
+arm_64bit=1
+disable_overscan=1
+
+#enable sound
+dtparam=audio=on
+#hdmi_drive=2
+
+#enable vc4
+dtoverlay=vc4-fkms-v3d
+max_framebuffers=2
+disable_splash=1
+
+#enable USB
+dtoverlay=dwc2,dr_mode=host
+
+#setup display
+max_usb_current=1
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt 1024 600 60 6 0 0 0

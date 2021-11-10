@@ -1,10 +1,19 @@
 #!/usr/bin/env sh
+
+case "$(uname -r)" in
+    *MANJARO*) ;;
+    *)
+        echo "This script must be run on Manjaro"
+        exit 1
+    ;;
+esac
+
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; cd .. ; pwd -P )
 
 echo "Initializing git submodules..."
 git submodule update --init --recursive
 echo "Installing dependencies..."
-sudo pacman -S opus expat openssl alsa-lib avahi libevdev cmake base-devel --needed --noconfirm
+sudo pacman -S opus expat openssl alsa-lib avahi libevdev enet cmake base-devel --needed --noconfirm
 sudo pacman -S manjaro-arm-tools manjaro-tools-base --needed --noconfirm
 sudo getarmprofiles
 echo "Creating symlinks..."
