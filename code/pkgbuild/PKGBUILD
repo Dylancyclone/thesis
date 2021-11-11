@@ -15,7 +15,7 @@ optdepends=('raspberrypi-firmware-tools: Raspberry Pi support'
             'libcec: CEC support')
 makedepends=('cmake')
 source=(moonlight.tar)
-sha256sums=('4a907a583f6a3b625a70b150630ccca4a20cd79b821e734086c963966e13bb53')
+sha256sums=(SKIP)
 
 build() {
   mkdir -p "${srcdir}/build"

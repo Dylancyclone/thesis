@@ -76,6 +76,7 @@ runBuild()
     sudo cp ./pkgbuild/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst /var/cache/pacman/pkg/
     # Build image
     sudo buildarmimg -d rpi4 -e thesis -i $pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst
+    read -s -n 1 -p "Image built, press a key to continue (for sudo)"
     # Remove local package from cache
     sudo rm /var/cache/pacman/pkg/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst -f
     # Move build image to build folder
