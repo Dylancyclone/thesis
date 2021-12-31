@@ -8,7 +8,7 @@ disable_overscan=1
 
 #enable sound
 dtparam=audio=on
-#hdmi_drive=2
+hdmi_drive=2
 
 #enable vc4
 dtoverlay=vc4-fkms-v3d
@@ -19,7 +19,6 @@ disable_splash=1
 dtoverlay=dwc2,dr_mode=host
 
 #setup display
-max_usb_current=1
 hdmi_group=2
 hdmi_mode=87
 hdmi_cvt 1024 600 60 6 0 0 0
