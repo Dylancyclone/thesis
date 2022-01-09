@@ -15,11 +15,17 @@ Adapted from theju/linux-keylogger
 #include <signal.h>
 #include <unistd.h>
 #include <chrono>
+#include <thread>
+#include <math.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 #define MAX_EVENTS 100
 #define MAXKEYS 104
 
 using namespace std;
+
+FILE *pFile;
 
 void CTRL_C_Handler(int);
 
@@ -27,7 +33,6 @@ class KeyLogger
 {
 private:
   int fd, efd, cfg, ret;
-  FILE *pFile;
   char *temp;
   ENTRY ep, *search_result;
   struct input_event ev;
@@ -283,12 +288,6 @@ public:
       }
     }
 
-    if (!(pFile = fopen(argv[2], "a")))
-    {
-      cerr << "od open: " << strerror(errno) << endl;
-      exit(1);
-    }
-
     if ((efd = epoll_create(sizeof(fd))) < 0)
     {
       cerr << "epoll_create: " << strerror(errno) << endl;
@@ -348,12 +347,80 @@ public:
   }
 };
 
+XColor getPixelColor(Display *display, int x, int y)
+{
+  XColor pixel_color;
+  Window root = XRootWindow(display, XDefaultScreen(display));
+  XMapRaised(display, root);
+  XImage *screen_image = XGetImage(
+      display,
+      root,
+      x, y,
+      1, 1,
+      AllPlanes,
+      XYPixmap);
+  pixel_color.pixel = XGetPixel(screen_image, 0, 0);
+  XFree(screen_image);
+  XQueryColor(display, XDefaultColormap(display, XDefaultScreen(display)), &pixel_color);
+
+  return pixel_color;
+}
+
+void colorThread()
+{
+
+  double prev_r, prev_g, prev_b = 0;
+  while (true)
+  {
+    Display *display = XOpenDisplay(NULL);
+    // get center of screen
+    int x = XDisplayWidth(display, XDefaultScreen(display)) / 2;
+    int y = XDisplayHeight(display, XDefaultScreen(display)) / 2;
+    // get color of pixel at center of screen
+    XColor screen_pixel_color = getPixelColor(display, x, y);
+    int _red = round(screen_pixel_color.red / 256.0);
+    int _green = round(screen_pixel_color.green / 256.0);
+    int _blue = round(screen_pixel_color.blue / 256.0);
+
+    double colorDistance = sqrt(pow(_red - prev_r, 2) + pow(_green - prev_g, 2) + pow(_blue - prev_b, 2));
+
+    if (colorDistance > 10)
+    {
+      // get time
+      unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+      if (fprintf(pFile, "%llu,[Color Change: %d %d %d]\n", now, _red, _green, _blue) < 0)
+      {
+        cerr << "pFile write: " << strerror(errno) << endl;
+        exit(1);
+      }
+      fflush(pFile);
+      // std::cout << "Color: " << _red << "," << _green << "," << _blue << std::endl;
+      prev_r = _red;
+      prev_g = _green;
+      prev_b = _blue;
+    }
+    XCloseDisplay(display);
+  }
+}
+
 KeyLogger *keylogger;
 
 int main(int argc, char **argv)
 {
+  if (!(pFile = fopen(argv[2], "a")))
+  {
+    cerr << "od open: " << strerror(errno) << endl;
+    exit(1);
+  }
+
+  //Start reading color
+  std::thread t1(colorThread);
+
   keylogger = new KeyLogger(argc, argv);
   keylogger->log();
+
+  t1.join();
+
   exit(-1);
 }
 
