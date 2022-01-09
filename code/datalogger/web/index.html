@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      let nextColor = "green";
+      document.addEventListener("keydown", function (e) {
+        document.body.setAttribute("style", "background-color:" + nextColor);
+        nextColor = nextColor === "green" ? "red" : "green";
+      });
+    </script>
+  </head>
+  <body></body>
+</html>
