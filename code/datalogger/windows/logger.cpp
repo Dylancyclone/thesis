@@ -168,7 +168,7 @@ void colorThread()
 					unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 					output_file << now << ",[Color Change: " << _red << " " << _green << " " << _blue << "]" << std::endl;
 					output_file.flush();
-					std::cout << "Color: " << _red << "," << _green << "," << _blue << std::endl;
+					// std::cout << "Color: " << _red << "," << _green << "," << _blue << std::endl;
 					prev_r = _red;
 					prev_g = _green;
 					prev_b = _blue;
