@@ -18,6 +18,7 @@
  */
 
 #include "video.h"
+#include "stats.h"
 #include "egl.h"
 #include "ffmpeg.h"
 #ifdef HAVE_VAAPI
@@ -52,6 +53,10 @@ static int pipefd[2];
 static int display_width;
 static int display_height;
 
+int m_LastFrameNumber = 0;
+VIDEO_STATS m_ActiveWndVideoStats;
+VIDEO_STATS m_GlobalVideoStats;
+
 static int frame_handle(int pipefd) {
   AVFrame* frame = NULL;
   while (read(pipefd, &frame, sizeof(void*)) > 0);
@@ -68,6 +73,9 @@ static int frame_handle(int pipefd) {
 }
 
 int x11_init(bool vdpau, bool vaapi) {
+  SDL_zero(m_ActiveWndVideoStats);
+  SDL_zero(m_GlobalVideoStats);
+  
   XInitThreads();
   display = XOpenDisplay(NULL);
   if (!display)
@@ -161,15 +169,122 @@ int x11_setup_vaapi(int videoFormat, int width, int height, int redrawRate, void
   return x11_setup(videoFormat, width, height, redrawRate, context, drFlags | X11_VAAPI_ACCELERATION);
 }
 
+void stringifyVideoStats(VIDEO_STATS* stats, char* output)
+{
+    int offset = 0;
+
+    // Start with an empty string
+    output[offset] = 0;
+
+    if (stats->receivedFps > 0) {
+        offset += sprintf(&output[offset],
+                          "Incoming frame rate from network: %.2f FPS\n"
+                          "Decoding frame rate: %.2f FPS\n"
+                          "Rendering frame rate: %.2f FPS\n",
+                          stats->receivedFps,
+                          stats->decodedFps,
+                          stats->renderedFps);
+    }
+
+    if (stats->renderedFrames != 0) {
+        char rttString[32];
+
+        if (stats->lastRtt != 0) {
+            sprintf(rttString, "%u ms (variance: %u ms)", stats->lastRtt, stats->lastRttVariance);
+        }
+        else {
+            sprintf(rttString, "N/A");
+        }
+
+        offset += sprintf(&output[offset],
+                          "Frames dropped by your network connection: %.2f%%\n"
+                          "Average network latency: %s\n"
+                          "Average decoding time: %.2f ms\n"
+                          "Average rendering time (including monitor V-sync latency): %.2f ms\n",
+                          (float)stats->networkDroppedFrames / stats->totalFrames * 100,
+                          rttString,
+                          (float)stats->totalDecodeTime / stats->decodedFrames,
+                          (float)stats->totalRenderTime / stats->renderedFrames);
+    }
+}
+
 void x11_cleanup() {
+  if (m_GlobalVideoStats.renderedFps > 0 || m_GlobalVideoStats.renderedFrames != 0) {
+    char videoStatsStr[512];
+    stringifyVideoStats(&m_GlobalVideoStats, videoStatsStr);
+
+    printf("\n\nGlobal Video Stats\n----------------------------------------------------------\n");
+    printf("%s\n\n", videoStatsStr);
+    printf("m_GlobalVideoStats.networkDroppedFrames%d\n\n", m_GlobalVideoStats.networkDroppedFrames);
+  }
   ffmpeg_destroy();
   egl_destroy();
+}
+
+void addVideoStats(VIDEO_STATS* src, VIDEO_STATS* dst)
+{
+    dst->receivedFrames += src->receivedFrames;
+    dst->decodedFrames += src->decodedFrames;
+    dst->renderedFrames += src->renderedFrames;
+    dst->totalFrames += src->totalFrames;
+    dst->networkDroppedFrames += src->networkDroppedFrames;
+    dst->totalDecodeTime += src->totalDecodeTime;
+    dst->totalRenderTime += src->totalRenderTime;
+
+    if (!LiGetEstimatedRttInfo(&dst->lastRtt, &dst->lastRttVariance)) {
+        dst->lastRtt = 0;
+        dst->lastRttVariance = 0;
+    }
+    else {
+        // Our logic to determine if RTT is valid depends on us never
+        // getting an RTT of 0. ENet currently ensures RTTs are >= 1.
+        SDL_assert(dst->lastRtt > 0);
+    }
+
+    uint32_t now = SDL_GetTicks();
+
+    // Initialize the measurement start point if this is the first video stat window
+    if (!dst->measurementStartTimestamp) {
+        dst->measurementStartTimestamp = src->measurementStartTimestamp;
+    }
+
+    // The following code assumes the global measure was already started first
+    SDL_assert(dst->measurementStartTimestamp <= src->measurementStartTimestamp);
+
+    dst->receivedFps = (float)dst->receivedFrames / ((float)(now - dst->measurementStartTimestamp) / 1000);
+    dst->decodedFps = (float)dst->decodedFrames / ((float)(now - dst->measurementStartTimestamp) / 1000);
+    dst->renderedFps = (float)dst->renderedFrames / ((float)(now - dst->measurementStartTimestamp) / 1000);
 }
 
 int x11_submit_decode_unit(PDECODE_UNIT decodeUnit) {
   if (decodeUnit->fullLength < DECODER_BUFFER_SIZE) {
     PLENTRY entry = decodeUnit->bufferList;
     int length = 0;
+    if (!m_LastFrameNumber) {
+        m_ActiveWndVideoStats.measurementStartTimestamp = SDL_GetTicks();
+        m_LastFrameNumber = decodeUnit->frameNumber;
+    }
+    else {
+        // Any frame number greater than m_LastFrameNumber + 1 represents a dropped frame
+        m_ActiveWndVideoStats.networkDroppedFrames += decodeUnit->frameNumber - (m_LastFrameNumber + 1);
+        m_ActiveWndVideoStats.totalFrames += decodeUnit->frameNumber - (m_LastFrameNumber + 1);
+        m_LastFrameNumber = decodeUnit->frameNumber;
+    }
+
+    // Flip stats windows roughly every second
+    if (SDL_TICKS_PASSED(SDL_GetTicks(), m_ActiveWndVideoStats.measurementStartTimestamp + 1000)) {
+        // Accumulate these values into the global stats
+        
+        addVideoStats(&m_ActiveWndVideoStats, &m_GlobalVideoStats);
+
+        // Clear it for next window
+        SDL_zero(m_ActiveWndVideoStats);
+        m_ActiveWndVideoStats.measurementStartTimestamp = SDL_GetTicks();
+    }
+
+    m_ActiveWndVideoStats.receivedFrames++;
+    m_ActiveWndVideoStats.totalFrames++;
+
     while (entry != NULL) {
       memcpy(ffmpeg_buffer+length, entry->data, entry->length);
       length += entry->length;
@@ -178,7 +293,17 @@ int x11_submit_decode_unit(PDECODE_UNIT decodeUnit) {
     ffmpeg_decode(ffmpeg_buffer, length);
     AVFrame* frame = ffmpeg_get_frame(true);
     if (frame != NULL)
+      m_ActiveWndVideoStats.totalDecodeTime += LiGetMillis() - decodeUnit->enqueueTimeMs;
+      m_ActiveWndVideoStats.decodedFrames++;
+
+      u_int32_t beforeRender = SDL_GetTicks();
+
       write(pipefd[1], &frame, sizeof(void*));
+
+      u_int32_t afterRender = SDL_GetTicks();
+      m_ActiveWndVideoStats.totalRenderTime += afterRender - beforeRender;
+
+      m_ActiveWndVideoStats.renderedFrames++;
   }
 
   return DR_OK;
