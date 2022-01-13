@@ -1,0 +1,6 @@
+[submodule "moonlight-common-c"]
+	path = code/moonlight/external/moonlight-common-c
+	url = https://github.com/moonlight-stream/moonlight-common-c.git
+[submodule "code/moonlight/external/SDL_GameControllerDB"]
+	path = code/moonlight/external/SDL_GameControllerDB
+	url = https://github.com/gabomdq/SDL_GameControllerDB.git
