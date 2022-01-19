@@ -7,6 +7,7 @@
     "egl.h": "c",
     "limelight-internal.h": "c",
     "limelight.h": "c",
-    "rtpaudioqueue.h": "c"
+    "rtpaudioqueue.h": "c",
+    "chrono": "cpp"
   }
 }

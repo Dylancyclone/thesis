@@ -46,6 +46,7 @@ const std::map<int, std::string> keyname{
 		{VK_SUBTRACT, "-"},
 		{VK_CAPITAL, "[CAPSLOCK]"},
 };
+int inputCounter = 0;
 HHOOK _hook;
 
 typedef WINAPI COLORREF (*GETPIXEL)(HDC, int, int);
@@ -100,6 +101,12 @@ int Save(int key_stroke)
 	std::stringstream output;
 	HKL layout = NULL;
 
+	if (key_stroke == VK_RETURN)
+	{
+		// If Numpad 0 is hit, reset the counter for easy data comprehension
+		inputCounter = 0;
+	}
+
 	if (keyname.find(key_stroke) != keyname.end())
 	{
 		output << keyname.at(key_stroke);
@@ -129,7 +136,7 @@ int Save(int key_stroke)
 	// get time
 	unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	// instead of opening and closing file handlers every time, keep file open and flush.
-	output_file << now << "," << output.str() << std::endl;
+	output_file << now << "," << output.str() << "," << inputCounter++ << ",windows" << std::endl;
 	output_file.flush();
 
 	std::cout << output.str();
@@ -166,7 +173,7 @@ void colorThread()
 				{
 					// get time
 					unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-					output_file << now << ",[Color Change: " << _red << " " << _green << " " << _blue << "]" << std::endl;
+					output_file << now << ",[Color Change: " << _red << " " << _green << " " << _blue << "]" << "," << inputCounter++ << ",windows" << std::endl;
 					output_file.flush();
 					// std::cout << "Color: " << _red << "," << _green << "," << _blue << std::endl;
 					prev_r = _red;
@@ -182,7 +189,7 @@ void colorThread()
 int main()
 {
 	// open output file in append mode
-	const char *output_filename = "data.log";
+	const char *output_filename = "datalogger_windows.csv";
 	std::cout << "Logging output to " << output_filename << std::endl;
 	output_file.open(output_filename, std::ios_base::app);
 
