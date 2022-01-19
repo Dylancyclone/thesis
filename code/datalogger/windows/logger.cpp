@@ -46,7 +46,8 @@ const std::map<int, std::string> keyname{
 		{VK_SUBTRACT, "-"},
 		{VK_CAPITAL, "[CAPSLOCK]"},
 };
-int inputCounter = 0;
+int keysInputCounter = 0;
+int colorsInputCounter = 0;
 HHOOK _hook;
 
 typedef WINAPI COLORREF (*GETPIXEL)(HDC, int, int);
@@ -56,7 +57,8 @@ typedef WINAPI COLORREF (*GETPIXEL)(HDC, int, int);
 KBDLLHOOKSTRUCT kbdStruct;
 
 int Save(int key_stroke);
-std::ofstream output_file;
+std::ofstream output_file_keys;
+std::ofstream output_file_colors;
 
 // This is the callback function. Consider it the event that is raised when, in this case,
 // a key is pressed.
@@ -104,7 +106,8 @@ int Save(int key_stroke)
 	if (key_stroke == VK_RETURN)
 	{
 		// If Numpad 0 is hit, reset the counter for easy data comprehension
-		inputCounter = 0;
+		keysInputCounter = 0;
+		colorsInputCounter = 0;
 	}
 
 	if (keyname.find(key_stroke) != keyname.end())
@@ -136,8 +139,8 @@ int Save(int key_stroke)
 	// get time
 	unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	// instead of opening and closing file handlers every time, keep file open and flush.
-	output_file << now << "," << output.str() << "," << inputCounter++ << ",windows" << std::endl;
-	output_file.flush();
+	output_file_keys << now << "," << output.str() << "," << keysInputCounter++ << ",windows" << std::endl;
+	output_file_keys.flush();
 
 	std::cout << output.str();
 
@@ -173,8 +176,8 @@ void colorThread()
 				{
 					// get time
 					unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-					output_file << now << ",[Color Change: " << _red << " " << _green << " " << _blue << "]" << "," << inputCounter++ << ",windows" << std::endl;
-					output_file.flush();
+					output_file_colors << now << ",[Color Change: " << _red << " " << _green << " " << _blue << "]" << "," << colorsInputCounter++ << ",windows" << std::endl;
+					output_file_colors.flush();
 					// std::cout << "Color: " << _red << "," << _green << "," << _blue << std::endl;
 					prev_r = _red;
 					prev_g = _green;
@@ -189,9 +192,13 @@ void colorThread()
 int main()
 {
 	// open output file in append mode
-	const char *output_filename = "datalogger_windows.csv";
-	std::cout << "Logging output to " << output_filename << std::endl;
-	output_file.open(output_filename, std::ios_base::app);
+	const char *output_filename_keys = "datalogger_keys_windows.csv";
+	std::cout << "Logging output to " << output_filename_keys << std::endl;
+	output_file_keys.open(output_filename_keys, std::ios_base::app);
+
+	const char *output_filename_colors = "datalogger_colors_windows.csv";
+	std::cout << "Logging output to " << output_filename_colors << std::endl;
+	output_file_colors.open(output_filename_colors, std::ios_base::app);
 
 	// set the hook
 	SetHook();

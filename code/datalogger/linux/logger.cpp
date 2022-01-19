@@ -26,7 +26,9 @@ Adapted from theju/linux-keylogger
 using namespace std;
 
 FILE *pFile;
-int inputCounter = 0;
+FILE *pFile2;
+int keysInputCounter = 0;
+int colorsInputCounter = 0;
 
 void CTRL_C_Handler(int);
 
@@ -260,7 +262,7 @@ public:
         "[PAUSE]",
     };
 
-    if (argc != 3)
+    if (argc != 2)
     {
       cerr << "usage: " << argv[0] << " event-device output-file - probably /dev/input/evdev0" << endl;
       exit(1);
@@ -331,11 +333,12 @@ public:
           if (!strcmp((char *)search_result->data, "[RETURN]"))
           {
             // If Numpad 0 is hit, reset the counter for easy data comprehension
-            inputCounter = 0;
+            keysInputCounter = 0;
+            colorsInputCounter = 0;
           }
           // get time
           unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-          if (fprintf(pFile, "%llu,%s,%d,linux\n", now, (char *)search_result->data, inputCounter++) < 0)
+          if (fprintf(pFile, "%llu,%s,%d,linux\n", now, (char *)search_result->data, keysInputCounter++) < 0)
           {
             cerr << "pFile write: " << strerror(errno) << endl;
             exit(1);
@@ -394,12 +397,12 @@ void colorThread()
     {
       // get time
       unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-      if (fprintf(pFile, "%llu,[Color Change: %d %d %d],%d,linux\n", now, _red, _green, _blue, inputCounter++) < 0)
+      if (fprintf(pFile2, "%llu,[Color Change: %d %d %d],%d,linux\n", now, _red, _green, _blue, colorsInputCounter++) < 0)
       {
-        cerr << "pFile write: " << strerror(errno) << endl;
+        cerr << "pFile2 write: " << strerror(errno) << endl;
         exit(1);
       }
-      fflush(pFile);
+      fflush(pFile2);
       // std::cout << "Color: " << _red << "," << _green << "," << _blue << std::endl;
       prev_r = _red;
       prev_g = _green;
@@ -413,7 +416,12 @@ KeyLogger *keylogger;
 
 int main(int argc, char **argv)
 {
-  if (!(pFile = fopen(argv[2], "a")))
+  if (!(pFile = fopen("./datalogger_keys_linux.csv", "a")))
+  {
+    cerr << "od open: " << strerror(errno) << endl;
+    exit(1);
+  }
+  if (!(pFile2 = fopen("./datalogger_colors_linux.csv", "a")))
   {
     cerr << "od open: " << strerror(errno) << endl;
     exit(1);
