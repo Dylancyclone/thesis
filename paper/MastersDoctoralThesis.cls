@@ -275,7 +275,7 @@
 %	HEADERS AND FOOTERS
 %----------------------------------------------------------------------------------------
 
-\RequirePackage[markcase=used]{scrlayer-scrpage}
+\RequirePackage[markcase=used, draft=false]{scrlayer-scrpage}
 \providepairofpagestyles{thesisSimple}{%
 	\clearpairofpagestyles%
 	\automark[chapter]{chapter}

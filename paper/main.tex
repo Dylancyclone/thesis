@@ -22,7 +22,8 @@
 %oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
 english, % ngerman for German
 singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
-%draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+% draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+% final, % Uncomment to enable final mode (hide todos)
 %nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
 %liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
 %toctotoc, % Uncomment to add the main table of contents to the table of contents
@@ -43,6 +44,10 @@ headsepline, % Uncomment to get a line under the header
 \addbibresource{example.bib} % The filename of the bibliography
 
 \usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
+
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny,obeyFinal]{todonotes} % Todo notes in margin
+
+\newcommand{\todosection}{\todo[linecolor=olive,backgroundcolor=olive!25,bordercolor=olive,inline]{TODO}}
 
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
@@ -201,8 +206,11 @@ headsepline, % Uncomment to get a line under the header
 
 \begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
 
-	\textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere\\
-	\textbf{WSF} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or\\
+	\textbf{CRD} & \textbf{C}hrome \textbf{R}emote \textbf{D}esktop\\
+	\textbf{PCB} & \textbf{P}rinted \textbf{C}ircuit \textbf{B}oard\\
+	\textbf{RDP} & \textbf{R}emote \textbf{D}esktop \textbf{P}rotocol\\
+	\textbf{SSH} & \textbf{S}ecure \textbf{Sh}ell (Protocol)\\
+	\textbf{VNC} & \textbf{V}irtual \textbf{N}etwork \textbf{C}omputing\\
 
 \end{abbreviations}
 
@@ -210,30 +218,30 @@ headsepline, % Uncomment to get a line under the header
 %	PHYSICAL CONSTANTS/OTHER DEFINITIONS
 %----------------------------------------------------------------------------------------
 
-\begin{constants}{lr@{${}={}$}l} % The list of physical constants is a three column table
+% \begin{constants}{lr@{${}={}$}l} % The list of physical constants is a three column table
 
-	% The \SI{}{} command is provided by the siunitx package, see its documentation for instructions on how to use it
+% 	% The \SI{}{} command is provided by the siunitx package, see its documentation for instructions on how to use it
 
-	Speed of Light & $c_{0}$ & \SI{2.99792458e8}{\meter\per\second} (exact)\\
-	%Constant Name & $Symbol$ & $Constant Value$ with units\\
+% 	Speed of Light & $c_{0}$ & \SI{2.99792458e8}{\meter\per\second} (exact)\\
+% 	%Constant Name & $Symbol$ & $Constant Value$ with units\\
 
-\end{constants}
+% \end{constants}
 
 %----------------------------------------------------------------------------------------
 %	SYMBOLS
 %----------------------------------------------------------------------------------------
 
-\begin{symbols}{lll} % Include a list of Symbols (a three column table)
+% \begin{symbols}{lll} % Include a list of Symbols (a three column table)
 
-	$a$ & distance & \si{\meter} \\
-	$P$ & power & \si{\watt} (\si{\joule\per\second}) \\
-	%Symbol & Name & Unit \\
+% 	$a$ & distance & \si{\meter} \\
+% 	$P$ & power & \si{\watt} (\si{\joule\per\second}) \\
+% 	%Symbol & Name & Unit \\
 
-	\addlinespace % Gap to separate the Roman symbols from the Greek
+% 	\addlinespace % Gap to separate the Roman symbols from the Greek
 
-	$\omega$ & angular frequency & \si{\radian} \\
+% 	$\omega$ & angular frequency & \si{\radian} \\
 
-\end{symbols}
+% \end{symbols}
 
 %----------------------------------------------------------------------------------------
 %	DEDICATION
@@ -252,11 +260,13 @@ headsepline, % Uncomment to get a line under the header
 % Include the chapters of the thesis as separate files from the Chapters folder
 % Uncomment the lines as you write the chapters
 
-\include{Chapters/Chapter1}
-%\include{Chapters/Chapter2} 
-%\include{Chapters/Chapter3}
-%\include{Chapters/Chapter4} 
-%\include{Chapters/Chapter5} 
+\include{Chapters/Introduction}
+\include{Chapters/Background}
+\include{Chapters/StateOfTheArt}
+\include{Chapters/Hardware}
+\include{Chapters/Software}
+\include{Chapters/Evaluation}
+\include{Chapters/Conclusion}
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - APPENDICES
