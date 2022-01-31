@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="E">
   <design>
-    <source>D:\Documents\Git\thesis\kicad\customBoard\customBoard.kicad_sch</source>
-    <date>10/23/2021 7:53:36 PM</date>
+    <source>D:\Documents\Git\thesis\kicad\lathrum_thesis\lathrum_thesis.kicad_sch</source>
+    <date>1/31/2022 3:52:28 PM</date>
     <tool>Eeschema (5.99.0-10613-g4d227d2d2b)</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -10,7 +10,7 @@
         <company/>
         <rev/>
         <date/>
-        <source>customBoard.kicad_sch</source>
+        <source>lathrum_thesis.kicad_sch</source>
         <comment number="1" value=""/>
         <comment number="2" value=""/>
         <comment number="3" value=""/>
