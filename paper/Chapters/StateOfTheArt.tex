@@ -9,8 +9,8 @@
 
 \section{Software Solutions}\label{sec:SoftwareSolutions}
 
-While there are many applications in existence that allow a user to remotely control a computer from another location, few of them offer the power required to stream high-performing applications to a remote device.
-The following subsections will introduce existing attempts to solve this problem as well as drawbacks that come with each implementation.
+While there are many applications in existence that allow a user to remotely control a computer from another location, few of them offer the \todo{Clarify power, since the issue isn't processing power}power required to stream high-performing applications to a remote device.
+The following subsections will introduce existing solutions to this problem as well as drawbacks that come with each implementation.
 
 
 \subsection{Remote Desktop Protocol}\label{subsec:RemoteDesktopProtocol}
@@ -23,6 +23,7 @@ Firstly, only one graphical session is active at one time while using windows.
 This means if a user is logged into the host computer and someone initiates a connection with RDP, the user using the host computer will be logged out.
 While this isn't always an issue, sensitive programs that don't take well to being logged out may run into issues.
 Secondly, RDP does not support relative mouse movement \cite{burgin_2013}.
+\todo{explain further}
 This means every mouse input is sent to the host computer as an absolute position on the screen, rather than as a relative distance from it's previous location.
 Again, while this isn't always an issue, any application that moves the mouse for the user, such as controlling 3D applications or anything dealing with virtual cameras such as animation or game development, cannot be controlled properly.
 
@@ -59,9 +60,9 @@ Hardware solutions usually focus on building a device that has just enough power
 
 \subsection{Thin Clients}\label{subsec:ThinClients}
 
-As discussed in Section \ref{sec:ThinClients}, Thin Clients are a device commonly seen in the corporate world to allow employees to access data centers and computing clusters from their desks.
+As discussed in Section \ref{sec:ThinClients}, Thin Clients are a family of devices commonly seen in the corporate world to allow employees to access data centers and computing clusters from their desks.
 Due to their low cost and ease of deployment, they are often the device of choice to enable employees to access the full power of the business' computing infrastructure without needed to purchase a powerful device for each employee.
-However, since a typical thin client is a headless device, meaning it doesn't come with a monitor, keyboard, mouse, or other peripherals, they are often less portable as one might thing.
+However, since a typical thin client is a headless device, meaning it doesn't come with a monitor, keyboard, mouse, or other peripherals, they are often less portable as one might think.
 A thin client is usually set up once, and then left in that place for as long as a desktop would stay.
 Especially with laptop sales on the rise, thin clients do not have the benefit of being more portable than the alternatives.
 
@@ -81,7 +82,6 @@ But while the the physical device was praised for performance, battery life, and
 It was still widely regarded as a technological breakthrough though, and Nvidia continued to develop the technology into a new device called the Nvidia Shield TV \cite{daniel_2017}.
 Focused on bringing the power of a gaming desktop to a TV, the Nvidia Shield TV dropped the idea of portability in favor of filling a different market focused on comfort.
 While this is no longer a valid device for the purposes of this paper, the developments of the proprietary GameStream technology that powered the Shield and the Shield TV proved to be even more exciting than the physical devices themselves.
-\todo{Does the picture look ok?}
 
 Though the GameStream technology that powers the Nvidia Shield devices is closed source and only officially compatible with the products Nvidia releases, its enticing power and potential drew a community to reverse engineer the protocol.
 In 2013, a group of students at Case Western Reserve University developed Moonlight, an open source implementation of the GameStream protocol \cite{moonlight}.
