@@ -41,10 +41,10 @@ Otherwise it may prove that the development of the software should focus on comp
 
 \section{Choosing Parts}\label{sec:ChoosingParts}
 
-When starting to choose parts for the hardware, \todo{First person, now this is me explaining what I did?}I had many difficult questions to face.
-First and foremost, as a Software Engineer with no experience with Electrical Engineering, I had to make sure I could build the hardware in a way that I could handle.
-Specifically, I knew I shouldn't even attempt to build a Single Board Computer on my own, but I knew I also did not want to purchase an off the shelf SBC that was not tailored to the task at hand such as a traditional Raspberry Pi.
-Instead I opted for a \emph{Raspberry Pi Compute Module 4 (CM4)} which has \enquote{The power of Raspberry Pi 4 in a compact form factor for deeply embedded applications} \cite{rpi_cm4}.
+When starting to choose parts for the hardware, there are many difficult questions to face.
+First and foremost, the hardware had to be built with the time and resources available for this project.
+Specifically, building a Single Board Computer from scratch would be completely infeasible, but the goal was also not to simply purchase an off the shelf SBC that was not tailored to the task at hand such as a traditional Raspberry Pi.
+Instead, a better suited solution would be to utilize a \emph{Raspberry Pi Compute Module 4 (CM4)} which has \enquote{The power of Raspberry Pi 4 in a compact form factor for deeply embedded applications} \cite{rpi_cm4}.
 Boasting an incredibly small size and streamlined I/O, there only way to communicate with the Compute Module was through two tiny mezzanine connectors as shown in Figure \ref{fig:rpi_cm4_mezzanine}.
 With no other pin outs for anything such as power, HDMI, or USB, everything had to be built on a custom Printed Circuit Board (PCB).
 
@@ -68,14 +68,14 @@ With no other pin outs for anything such as power, HDMI, or USB, everything had 
 
 This PCB would have to be designed so that the CM4 could be plugged into the board using the mezzanine connectors and rely on it for all inputs and outputs.
 This, however, is only the beginning of the story.
-Since I would not be working with an off the shelf SBC like a regular Raspberry PI, I would have to not only design the PCB but also pick out all the components that would go onto the PCB, such as the USB ports themselves, the USB driver chip, and related components needed for operation.
+Since the project would not use an off the shelf SBC like a regular Raspberry PI, the project would require only designing the PCB but also picking out all the components that would go onto the PCB, such as the USB ports themselves, the USB driver chip, and related components needed for operation.
 Because the CM4 is designed to be as low-powered and compact as possible, some features that would usually be expected of such a device, like the USB ports, are disabled by default and must instead be built by the board designer.
 While this helps greatly by removing extraneous components and features that aren't needed for this project, it also provides me with a \todo{does this sound sarcastic?}great opportunity to learn exactly what parts are being used in the hardware.
 
 An invaluable resource while designing the PCB was the Official I/O board for the CM4 \cite{rpi_cm4_io}.
-Though I'd still have to build my PCB board on my own and replace components due to the ongoing chip shortage, I wouldn't need to start from scratch.
+Though the PCB board would still have to be custom built and components would need to be replaced due to the current ongoing chip shortage, it provides a great foundation instead of starting from scratch.
 Another massive benefit from working within the Raspberry Pi Ecosystem is their \todo{(re)move?}incredible documentation and community surrounding the boards.
-Around the time I was starting this project, the CM4 was just starting to get into the hands of makers and developers, and only a couple custom boards had actually been made by anyone other than Raspberry Pi themselves.
+Around the time this project was being started, the CM4 was just starting to get into the hands of makers and developers, and only a couple custom boards had actually been made by anyone other than Raspberry Pi themselves.
 Even though this leaves the community with less of a bulk of knowledge to work with, it has provided a sort of comradery with everyone helping each other learn the new Compute Module together.
 Members of the CM4 engineering team would even assist those on the forums to help them pick parts and design their own boards.
 
@@ -83,7 +83,7 @@ Members of the CM4 engineering team would even assist those on the forums to hel
 \section{Prototyping}\label{sec:Prototyping}
 
 Whenever working with electrical projects such as this, it is always a good idea to build up prototypes before committing to a final design that will be produced at the highest quality.
-I have had experience with building breadboards and even some breakout boards for some components on other projects in the past, but due to the nature of the complex Surface Mounted Devices (SMD) required for this project as well as the dependence on the CM4's tiny mezzanine connectors, building a prototype using a breadboard is infeasible for the amount of time and resources at my disposal.
+Usually breadboards and some breakout boards for Surface Mounted Devices (SMD) are a great way to develop a circuit without creating a full PCB; but due to the nature of the complex microchips required for this project as well as the dependence on the CM4's tiny mezzanine connectors, building a prototype using a breadboard is impractical given the time and resources available.
 For example, the USB controller's footprint packs 64 pins into as small of a package as possible, requiring a breakout board of considerable size in order to access each pin separately by hand in a way that could be easily prototyped with.
 Not to mention the difficulty in wiring up that many pins along with the other related components which would need their own breakout boards either purchased or custom-designed.
 
@@ -96,11 +96,11 @@ Not to mention the difficulty in wiring up that many pins along with the other r
   \label{fig:smt_breakout}
 \end{figure}
 
-Instead, I opted to build out my first board in a piecewise fashion, allowing each section of the board a way to fail without interrupting the rest of the board.
-This allows me to test each function of the board individually and in isolation so that changes could be made incrementally without needing to worry about their integration with the rest of the board.
-For example, in order to build a system that would allow the board to be powered via USB or an internal battery, as well as charge the battery simultaneously, I would need to build a complex circuit consisting of parts neither I nor anyone I knew had used before.
-Since power is obviously a critical component of the board, I would also need to build a secondary way of feeding power directly the board to bypass all that circuitry in case it fails.
-In doing so, I can still power the board and test it's other features while developing a fix for that portion of the circuitry for the next iteration.
+Instead, the first board was built out in a piecewise fashion, allowing each section of the board a way to fail without interrupting the rest of the board.
+This allows each function of the board to be tested individually and in isolation so that changes could be made incrementally without needing to worry about their integration with the rest of the board.
+\todo{convert first person to third person}For example, in order to build a system that would allow the board to be powered via USB or an internal battery, as well as charge the battery simultaneously, I would need to build a complex circuit consisting of parts neither I nor anyone I knew had used before.
+Since power is obviously a critical component of the board, A secondary way of feeding power directly the board was built to bypass all that circuitry in case it fails.
+In doing so, the board can still be powered and it's other features can be tested while a fix for that portion of the circuitry is developed for the next iteration.
 
 
 \section{Designing the Printed Circuit Board}\label{sec:DesigningThePCB}
