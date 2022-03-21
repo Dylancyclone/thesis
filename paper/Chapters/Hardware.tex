@@ -2,6 +2,7 @@
 
 \label{Chapter4} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
+\todosection
 
 \section{Requirements}\label{sec:HardwareRequirements}
 
@@ -31,7 +32,7 @@ Such a requirement leads to a clear benefit of integrating crucial computers suc
 
 \subsection{Cost}\label{sec:HardwareCost}
 
-Because this project consists of both a Hardware and Software component to make up a complete product, there must be reason for both to exist.
+Because this project consists of both a Hardware and Software component to make up a complete product, there must be reason for both to be developed.
 While the software has the benefit of being the foundation for the connection between host and client machines, there are already hardware solutions that would theoretically be able to run such software.
 Since the goal of this project is to save money by not needing to purchase an expensive mobile device to connect to a powerful desktop computer, there must be benefit in the hardware to warrant it's existence over repurposing something like an old laptop.
 The most obvious metric of this is the actual cost of the hardware.
@@ -43,7 +44,7 @@ Otherwise it may prove that the development of the software should focus on comp
 
 When starting to choose parts for the hardware, there are many difficult questions to face.
 First and foremost, the hardware had to be built with the time and resources available for this project.
-Specifically, building a Single Board Computer from scratch would be completely infeasible, but the goal was also not to simply purchase an off the shelf SBC that was not tailored to the task at hand such as a traditional Raspberry Pi.
+Specifically, building a Single Board Computer\todoadvisor{introduce acronyms the first time they're used}\todo{This was introduced in 4.1.1, should it also be done here?} from scratch would be completely infeasible, but the goal was also not to simply purchase an off the shelf SBC that was not tailored to the task at hand such as a traditional Raspberry Pi.
 Instead, a better suited solution would be to utilize a \emph{Raspberry Pi Compute Module 4 (CM4)} which has \enquote{The power of Raspberry Pi 4 in a compact form factor for deeply embedded applications} \cite{rpi_cm4}.
 Boasting an incredibly small size and streamlined I/O, there only way to communicate with the Compute Module was through two tiny mezzanine connectors as shown in Figure \ref{fig:rpi_cm4_mezzanine}.
 With no other pin outs for anything such as power, HDMI, or USB, everything had to be built on a custom Printed Circuit Board (PCB).
@@ -67,7 +68,7 @@ With no other pin outs for anything such as power, HDMI, or USB, everything had 
 \end{figure}
 
 This PCB would have to be designed so that the CM4 could be plugged into the board using the mezzanine connectors and rely on it for all inputs and outputs.
-This, however, is only the beginning of the story.
+This, however, is only the beginning of what is required to develop the product.
 Since the project would not use an off the shelf SBC like a regular Raspberry PI, the project would require only designing the PCB but also picking out all the components that would go onto the PCB, such as the USB ports themselves, the USB driver chip, and related components needed for operation.
 Because the CM4 is designed to be as low-powered and compact as possible, some features that would usually be expected of such a device, like the USB ports, are disabled by default and must instead be built by the board designer.
 While this helps greatly by removing extraneous components and features that aren't needed for this project, it also provides me with a \todo{does this sound sarcastic?}great opportunity to learn exactly what parts are being used in the hardware.
@@ -84,7 +85,13 @@ Members of the CM4 engineering team would even assist those on the forums to hel
 
 Whenever working with electrical projects such as this, it is always a good idea to build up prototypes before committing to a final design that will be produced at the highest quality.
 Usually breadboards and some breakout boards for Surface Mounted Devices (SMD) are a great way to develop a circuit without creating a full PCB; but due to the nature of the complex microchips required for this project as well as the dependence on the CM4's tiny mezzanine connectors, building a prototype using a breadboard is impractical given the time and resources available.
-For example, the USB controller's footprint packs 64 pins into as small of a package as possible, requiring a breakout board of considerable size in order to access each pin separately by hand in a way that could be easily prototyped with.
+\begin{wrapfigure}{o}{0.375\textwidth}
+  \centering
+  \includegraphics[width=0.3\textwidth]{Figures/64-LQFP}
+  \caption[USB Controller]{The USB controller, with 0.5mm between pins}
+  \label{fig:USBController}
+\end{wrapfigure}
+For example, the USB controller chip only has 0.5mm of space between each of it's 64 pins (Figure \ref{fig:USBController}), which would require a breakout board at least 7 times larger than the chip so that each each pin can be easily accessed by hand.
 Not to mention the difficulty in wiring up that many pins along with the other related components which would need their own breakout boards either purchased or custom-designed.
 
 \begin{figure}[h]

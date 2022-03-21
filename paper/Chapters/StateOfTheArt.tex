@@ -2,10 +2,6 @@
 
 \label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-
-\section{Introduction}\label{sec:Introduction}
-
-\todo[inline]{Should this be a section on it's own or collapse it like the previous chapter?}
 This chapter seeks to provide a summary of existing solutions for remote computer access.
 It will not cover specific applications, but rather the protocols that are used to communicate with a remote computer.
 Generally speaking, there are two types of solutions that have been developed, software solutions, which are covered in Chapter \ref{sec:SoftwareSolutions} and hardware solutions, which are covered in Chapter \ref{sec:HardwareSolutions}.
@@ -105,6 +101,10 @@ In 2013, a group of students at Case Western Reserve University developed Moonli
 This open source implementation allows the development of GameStream compatible clients that can run on other devices, from other computers to embedded ARM devices.
 This stands as a good starting place to develop the solution described in this paper.
 
+\section{Summary}\label{sec:StateOfTheArtSummary}
+
+\todosection
+
 \section{Research Questions}\label{sec:ResearchQuestions}
 
 While there are many existing solutions for accessing a computer remotely, many struggle to be performant enough or efficient enough to stream demanding applications to the client without compromising on the user's experience.
@@ -115,5 +115,4 @@ This thesis will seek to build a solution that enables the use the power of a de
   \item \textbf{Hardware Cost:} \emph{Is it feasible to construct such as device at a lower or comparable cost to existing solutions?}
   \item \textbf{Communication Protocol:} \emph{Does a protocol exist that is efficient enough to stream demanding applications to a client?}
   \item \textbf{Software Application:} \emph{Can a software solution be built to utilize this protocol in a manner that performant enough?}
-  \item \textbf{Software Performance:} \emph{Can this solution be powerful enough to stream demanding applications to a client while remaining performant enough to be usable?}
 \end{enumerate}
