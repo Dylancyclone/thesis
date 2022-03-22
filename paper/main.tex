@@ -52,6 +52,9 @@ headsepline, % Uncomment to get a line under the header
 \newcommand{\todoadvisor}[1]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue]{#1}}
 \newcommand{\todosection}{\todo[linecolor=olive,backgroundcolor=olive!25,bordercolor=olive,inline]{TODO}}
 
+\usepackage{csvsimple} % Import CSV files for use in tables
+\usepackage{longtable} % Tables that span multiple pages
+
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
 %----------------------------------------------------------------------------------------
@@ -289,7 +292,7 @@ headsepline, % Uncomment to get a line under the header
 % Uncomment the lines as you write the Appendices
 
 \include{Appendices/AppendixA}
-%\include{Appendices/AppendixB}
+\include{Appendices/AppendixB}
 %\include{Appendices/AppendixC}
 
 %----------------------------------------------------------------------------------------

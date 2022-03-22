@@ -1,0 +1,12 @@
+\chapter{Bill of Materials} % Main appendix title
+
+\label{AppendixB} % For referencing this appendix elsewhere, use \ref{AppendixA}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{0.2\linewidth}|c|l|l|}%
+  \hline
+  \label{tab:BillOfMaterials}
+  \bfseries Reference \newline Designator& \bfseries Count & \bfseries Manufacturer's Number &\bfseries Value % Columns
+  \csvreader[respect percent=true, respect underscore=true, respect sharp=true, table head=\toprule, table foot=\bottomrule]{Figures/kicad/lathrum_thesis_bom.csv}{}% Data
+  {\\\hline\csvcoli&\csvcolii&\csvcolv&\csvcoliii}% Rows
+  \\\hline
+\end{longtable}
