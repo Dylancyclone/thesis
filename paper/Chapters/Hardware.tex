@@ -113,7 +113,7 @@ A full Bill of Materials can be found in Appendix \ref{AppendixB}.
   \hline
   SD-Card Power Regulator & \emph{RT9742VGJ5} by \enquote{Richtek USA Inc.} & The CM4 recommends the \emph{RT9742GGJ5F} from the same manufacturer, but it is out of stock. This part has slight differences that call for tweaks in the final layout. \\
   \hline
-  Battery Voltage Regulator and Boost Converter & \emph{TPS61090RSAR} by \enquote{TPS61090RSAR} & Used to charge balance power usage from the USB-C port or the attached battery, favoring the external power when available. \\
+  Battery Voltage Regulator and Boost Converter & \emph{TPS61090RSAR} by \enquote{TPS61090RSAR} & Used to balance power usage from the USB-C port or the attached battery, favoring the external power when available. \\
   \hline
   Li-Po Battery Charge Management Controller & \emph{MCP73871-2CCI\_ML} by \enquote{Microchip Technology} & Used to charge the attached battery when attached to external power through the USB-C port. \\
   \hline
@@ -159,18 +159,96 @@ Because of the lack of prototyping options and the complexity of the circuit and
 This allowed any single part of the circuit to fail without interfering with the other components.
 Since the time and budget for this project was limited, the amount of revisioning was minimized by running the circuit by as many people as possible to catch any potential flaws before the board was manufactured.
 
-\begin{wrapfigure}{r}{0.375\textwidth}
+\begin{figure}[b]
   \centering
-  \includegraphics[width=0.3\textwidth]{Figures/kicad/close-ups/power-front}
+  \includegraphics[width=0.33\textwidth]{Figures/kicad/close-ups/power-front}
   \caption[PCB Power Circuit]{The front side of the PCB's power circuit}
   \label{fig:PowerCircuit}
-\end{wrapfigure}
-Development started with arguably the most important part of the board: the power supply.
+\end{figure}
+
+Development started with arguably the most important part of the board: the power supply (schematic in Figure \ref{fig:pcb_schematic_battery}).
 If the CM4 could not receive power, none of the project would work.
 A feature of modern devices that has become ubiquitous as much as it has been taken for granted is the ability to charge a battery at the same time it is in use by the device.
 This enables the device to be used portably until the battery runs out and then charge the device without needing to stop using it before moving again.
 Though it proves to be slightly more complicated than simply connecting the two power supplies.
-As seen in Figure \ref{fig:PowerCircuit},
+As seen in Figure \ref{fig:PowerCircuit}, the source of external power, the USB-C port labeled \emph{J1}, has to travel through two integrated circuits before reaching the CM4 through the trace on the right side.
+The first chip, \emph{U2}, detailed in Table \ref{tab:SelectedComponents} as \emph{MCP73871-2CCI\_ML}, is used to charge the internal battery attached to the left side of the board through the connector labeled \emph{B1}.
+The second chip, \emph{U1}, also detailed in Table \ref{tab:SelectedComponents} as \emph{TPS61090RSAR}, is used to balance the power draw from the USB-C port or the attached battery, favoring the external power when the device is plugged in.
+Thankfully, due to the sensitivity of the two chips, their provided datasheets offer specific configurations that they should be designed in to ensure proper functionality.
+Although very dense, these blueprints promised individual functionality for each chip, all that was left was connecting them together.
+The two of these chips must work in tandem for power to be successfully delivered to the CM4, if either failed, none of the other parts of the board could be tested.
+In the event this happened, a secondary method of powering the board directly was added in the form of the generic two-pin header \emph{J2}.
+These two pins are simply 5v input and ground through-hole pins that bypass all the power circuitry just described.
+Once the CM4 could be powered, the rest of the I/O could be designed.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.33\textwidth]{Figures/kicad/close-ups/usb-front}
+  \caption[PCB USB Circuit]{The front side of the PCB's USB circuit}
+  \label{fig:USBCircuit}
+\end{figure}
+
+The next prominent circuit on the board is the section that controls the USB ports.
+As seen in Figure \ref{fig:USBCircuit} (schematic in Figure \ref{fig:pcb_schematic_usb}), the dense circuit is mostly comprised of the USB controller chip, \emph{U8}, it's associated components, and the four USB ports, two of which are pictured as \emph{J7} and \emph{J8}.
+Similarly to the power circuit, the USB controller chip is a very sensitive component that must be arranged in relation to other components in a certain way in order to ensure it will function properly.
+This includes surrounding the chip with numerous capacitors to normalize any small power fluctuations, using a specific load balancing power distribution switch (\emph{U9}), and an oscillating crystal to provide a stable clock for the chip.
+The chip connects to each of the four downstream USB ports and handles all of the digital signal processing before sending the data to the upstream CM4.
+
+\begin{figure}[b]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.6\linewidth]{Figures/kicad/close-ups/hdmi-front}
+    \caption{The front side of the PCB}
+    \label{fig:HDMICircuitFront}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.6\linewidth]{Figures/kicad/close-ups/hdmi-back}
+    \caption{The back side of the PCB}
+    \label{fig:HDMICircuitBack}
+  \end{subfigure}
+  \caption{The PCB's HDMI circuit}
+  \label{fig:HDMICircuit}
+\end{figure}
+
+Another vital part of the board is the two HDMI ports provided by the device.
+Thankfully, unlike the USB ports, HDMI ports send information in only one direction, so an extra chip is not necessary to handle the data as an intermediary.
+All that is necessary is to connect the two HDMI ports to the CM4 in the right order and the device will be able to output the rendered video to a display.
+Because this device is intended to be a standalone machine, it makes sense to have essential components like a screen integrated as part of the design.
+The only issue with simply attaching an HDMI cable inside of the device is that the ports are relatively bulky and inflexible, meaning that another solution must be created to fit in the tight space.
+This is accomplished with the Flat Flexible Cable Connector, seen on the right side of Figure \ref{fig:HDMICircuitFront} as \emph{J4}.
+Flat Flexible Cables (FFC) are generic bendable cables that can be used in tight spaces.
+Even though their connectors are completely generic, meaning that they have no set pinout, it is possible to use them given that the receiving screen will take in the FFC in the same order as a HDMI cable.
+Using this knowledge, an internal FFC can be wired for the device's primary screen, while a second tradition HDMI port can be exposed to the user in case they want to use an external monitor.
+This, along with the FFC used for one of the four USB ports, allows a screen to be hooked up to the CM4 internally without needing to expose anything to the user.
+
+Finally, everything must connect to the CM4.
+Figure \ref{fig:CM4Circuit} shows the the two mezzanine connectors the CM4 uses to communicate with the rest of the PCB (schematic in Figure \ref{fig:pcb_schematic_cm4}).
+Remember that there is only 0.04mm of space in between each of the pins, leaving very little space to route the traces where they need to go.
+The first thing to notice is the large stretch of traces on the back side of the board coming from the HDMI ports.
+Because most of the traces come in positive and negative pairs, called differential pairs, the two tracks must be roughly the same length as each other.
+This is because as data is transmitted across the pair of tracks, the two signals need to arrive at their destination at the same time, a time that is determined by the physical distance the signals need to cover.
+Since the speed of electricity is constant, the traces may need to wind back and forth so that the lengths positive and negative tracks are equal.
+Also note the cutout area at the top of the CM4, whose perimeter is stitched by vias; this is where the CM4 houses it's bluetooth and wifi antennas.
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.5\linewidth]{Figures/kicad/close-ups/cm4-front}
+    \caption{The front side of the PCB}
+    \label{fig:CM4CircuitFront}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.5\linewidth]{Figures/kicad/close-ups/cm4-back}
+    \caption{The back side of the PCB}
+    \label{fig:CM4CircuitBack}
+  \end{subfigure}
+  \caption{The circuitry surrounding the CM4's two mezzanine connectors}
+  \label{fig:CM4Circuit}
+\end{figure}
 
 
 \section{Manufacturing the Circuit Board}\label{sec:ManufacturingThePCB}
