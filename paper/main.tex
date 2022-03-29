@@ -50,7 +50,9 @@ headsepline, % Uncomment to get a line under the header
 
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny,obeyFinal]{todonotes} % Todo notes in margin
 
+\setlength{\marginparwidth}{3cm} % The width of the margin for todo notes
 \newcommand{\todoadvisor}[1]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue]{#1}}
+\newcommand{\todoquestion}[1]{\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green]{#1}}
 \newcommand{\todosection}{\todo[linecolor=olive,backgroundcolor=olive!25,bordercolor=olive,inline]{TODO}}
 
 \usepackage{csvsimple} % Import CSV files for use in tables
@@ -74,7 +76,7 @@ headsepline, % Uncomment to get a line under the header
 %	THESIS INFORMATION
 %----------------------------------------------------------------------------------------
 
-\thesistitle{Building a Mobile Device that Uses the Power of a Desktop Computer} % Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
+\thesistitle{Building a Mobile Device that Leverages the Power of a Desktop Computer} % Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
 \supervisor{Dr. Robert \textsc{Heinrichs}} % Your supervisor's name, this is used in the title page, print it elsewhere with \supname
 \examiner{} % Your examiner's name, this is not currently used anywhere in the template, print it elsewhere with \examname
 \degree{Software Engineering} % Your degree name, this is used in the title page and abstract, print it elsewhere with \degreename
@@ -184,8 +186,15 @@ headsepline, % Uncomment to get a line under the header
 %----------------------------------------------------------------------------------------
 
 \begin{abstract}
-	\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-	The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots
+\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+
+With the recent focus of attention towards remote work and mobile computing, the possibility of taking a powerful workstation wherever needed is enticing.
+However, even emerging laptops today struggle to compete with desktops in terms of cost, maintenance, and future upgrades.
+The price point of a powerful laptop is considerably higher compared to an equally powerful desktop computer, and most laptops are manufactured in a way that makes upgrading parts of the machine difficult or impossible, forcing a complete purchase in the event of failure or a component needing an upgrade.
+
+In the case where someone already owns a desktop computer and must be mobile, instead of needing to purchase a second device at full price, it may be possible to develop a low-cost computer that has just enough power to connect to the existing desktop and run all processing there, using the mobile device only as a user interface.
+
+
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
