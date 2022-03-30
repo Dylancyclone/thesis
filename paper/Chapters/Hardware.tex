@@ -17,7 +17,6 @@ When considering how much power needs to be incorporated in to the miniature com
 
 Immediately, the device must be capable of decoding and rendering video that is streamed over the internet.
 Such video processing is a relatively expensive process that cannot easily be done with something such as a micro controller or even a single core CPU seen on Single Board Computers (SBC) such as the Raspberry Pi Zero due to the lack of working memory and processing power \cite{picockpit_2021}.
-\todoadvisor{Add more detail?}
 Though at the same time, it is important to not simply build a powerful system akin to a laptop that will consume more power.
 It makes no sense to built a powerful mini-computer when all it will ever be used to is to connect to another computer, and the added power draw would require a larger battery in order to stay operational for decent periods of time.
 Instead it should be cut down and distilled into something that can do it's job as efficiently as possible.
@@ -30,7 +29,7 @@ This will help the device work on a consistent connection when used at a desk, w
 
 This leads to the desire for a portable design that can be used both in a conducive environnement such as a desk or while mobile.
 The hardware should have the ability to be powered by a chord plugging into the device, or by an internal battery.
-This alone presents a number of difficult concerns, but those will be addressed later in this chapter\todo{cite}.
+This alone presents a number of difficult concerns which will be addressed in Section \ref{sec:Prototyping}.
 Such a requirement leads to a clear benefit of integrating crucial computers such as a battery and a screen into the hardware design, while leaving as many ports open such as ethernet and USB for the user to take advantage of.
 
 
@@ -82,16 +81,27 @@ Since the project would not use an off the shelf SBC like a regular Raspberry PI
 Because the CM4 is designed to be as low-powered and compact as possible, some features that would usually be expected of such a device, like the USB ports, are disabled by default and must instead be built by the board designer.
 While this helps greatly by removing extraneous components and features that aren't needed for this project, it also provides me with a \todoquestion{does this sound sarcastic?}great opportunity to learn exactly what parts are being used in the hardware.
 
+Thought must also be given to the peripherals that will be included in the design.
+Most importantly, if a screen is going to be included in the design, what kind of screen will be used?
+For projects of this scale, the usual candidates for a relatively performant screen are HDMI screens or DSI screens.
+While HDMI screens are much more common and recognizable, DSI screens are a new development that promises high performance in low cost and low power applications such as embedded systems.
+However, when looking into existing DSI screens, there are a couple of issues that prevent it from being the best choice for this project.
+Even though DSI screens are more power efficient and have built in touch support, it is a closed format which greatly restricts manufactures from producing their own screens \cite{dsi_vs_hdmi}.
+Due to this, there is only one screen available for purchase outside of the official implementation, and both have a lower resolution that what is possible with HDMI screens of the same size.
+So even though HDMI screens are more expensive at this size, they are a more reliable choice compared to the still-developing DSI standard.
+
+Another potential feature to consider is whether to integrate a Real Time Clock (RTC) into the design.
+An RTC is a component commonly found within laptop and desktop computers that is used to keep track of time even though the computer is powered off.
+This is done with a small button battery powering an RTC chip integrated into the motherboard to keep the system's clock in sync with the real world.
+While this is almost never necessary in embedded systems, it is worth considering for this project because of it's use as a mobile computer.
+However, when considering the primary use case of connecting to another computer over the internet, and the potential of needing a linux kernel patch in order to add support for the RTC \cite{rtc_kernelpatch}, it would be much simpler to tell the operating system to simply resync it's clock with an internet clock every time it connects to a network.
+
 An invaluable resource while designing the PCB was the Official I/O board for the CM4 \cite{rpi_cm4_io}.
 Though the PCB board would still have to be custom built and components would need to be replaced due to the current ongoing chip shortage, it provides a great foundation instead of starting from scratch.
 Another massive benefit from working within the Raspberry Pi Ecosystem is their \todoquestion{(re)move?}incredible documentation and community surrounding the boards.
 Around the time this project was being started, the CM4 was just starting to get into the hands of makers and developers, and only a couple custom boards had actually been made by anyone other than Raspberry Pi themselves.
 Even though this leaves the community with less of a bulk of knowledge to work with, it has provided a sort of comradery with everyone helping each other learn the new Compute Module together.
 Members of the CM4 engineering team would even assist those on the forums to help them pick parts and design their own boards.
-
-\todo{Add paragraph on DSI vs HDMI}
-
-\todo{Add paragraph RTC}
 
 Following the example put forward by the existing boards, PCB parts were chosen to be integrated into the circuit as safely as possible.
 Thankfully due to most parts following international standards, many parts were chosen simply because they followed the same standard as the CM4 (such as USB 2.0, or \emph{1PORT 1000 BASE-T} Ethernet) and were in stock.
@@ -241,7 +251,6 @@ This is where the WiFi and Bluetooth antennas are located on the CM4 board.
 By removing the copper pour from this area on the PCB board and stitching the perimeter with vias, it prevents the board from acting like another antenna and interfering with the signals being sent to and from the CM4.
 Finally, each of the other components are connected to the CM4 board in the same manner as described previously in the chapter, such as the Ethernet adapter, the SD card reader, and remaining ports. See Appendices \ref{AppendixA} and \ref{AppendixB} for further information.
 
-
 \begin{figure}[t]
   \centering
   \begin{subfigure}{.5\textwidth}
@@ -263,4 +272,68 @@ Finally, each of the other components are connected to the CM4 board in the same
 
 \section{Manufacturing the Circuit Board}\label{sec:ManufacturingThePCB}
 
-\todosection
+\begin{figure}[b]
+  \centering
+  \includegraphics[width=0.5\textwidth]{Figures/kicad/close-ups/stencil}
+  \caption[PCB Stencil]{The PCB's stencil. Areas colored black are where solder paste is applied to solder SMD parts to the board}
+  \label{fig:PCBStencil}
+\end{figure}
+
+\todo[inline]{Insert pictures of PCB. Thinking at least one showing the flaws of the first board, another of the completed board}
+
+Once the board's design has been completed and checked against all electrical, functional, and manufacturing constraints, the Printed Circuit Board can be produced.
+The first step in fabrication is to print the actual PCB.
+While ASU offers a basic printing service for use in classes and academic projects, the requirements of this board, specifically the tiny traces and pads required for the CM4's mezzanine connectors (pictured in Figure \ref{fig:rpi_cm4_mezzanine}), are outside of the printer's capabilities.
+Instead, by recommendation of a professor, the printing was done through JLCPC (\href{https://www.jlcpc.com/}{JLCPCB.com})\todoquestion{Would this be the right format for linking JLCPCB? It's not really a source or a reference that would be linked in the bibliography}, a company that provides quick turnaround and low costs for printing PCBs.
+A set of five boards was ordered, allowing for multiple boards to be assembled in case of error, as well as a stencil.
+A PCB stencil is a thin sheet of metal with holes cut in it that line up with the pads on the PCB board.
+This enables the easy application of solder paste onto all of the pads on the board as once, including the difficulty small pads of the CM4's mezzanine connectors.
+While the PCB was being printed, all of the parts found in the Bill of Materials (found in Appendix \ref{AppendixB}) were ordered from sites such as Digi-Key and Mouser.\todoquestion{Should I mention small issues such as the time when I ordered the PCB and before I could order the parts one of them went out of stock? I worry that that would break the flow of the paper, and I already mentioned stock issues in a previous section. I feel like it's a detail that makes an interesting story, but since this isn't a story paper it's not needed here.}
+In order to account for the production of multiple prototype boards and the possibility of broken parts, enough parts were ordered to produce five complete boards.
+
+Once the PCB and it's component parts arrived, it was time for assembly.
+The first board was assembled by hand using the PCB stencil and a handheld heat gun.
+The stencil, shown as an image in Figure \ref{fig:PCBStencil}, is used by securing it the PCB board so that the holes line up with the pads, and spreading solder paste across it allowing the paste to cover the exposed pads through the holes.
+The stencil was then removed, and each of the surface mounted components were then placed onto the board using a set of tweezers.
+For tricky parts such as the CM4's mezzanine connectors and other small parts with the pads below the component itself, a microscope was used to assist in lining up the pads with the components.
+Once the parts were placed, a heat gun was used to melt the solder paste and fuse the components to the board.
+Following the SMDs, the through-hole components, such as the ports lining the side of the board, were then placed and soldered using a hand-held \todoquestion{soldering iron or solder iron?}soldering iron.
+
+The first board ran into two issues that prevented it from working.
+Firstly, due to improper use of the heat gun, most of the LEDs had popped, resulting in all hardware-level diagnostic indicators being inoperable.
+Secondly, the CM4 connectors were not properly connected to the board, and in an attempt to repair it, the connector components were irreparably damaged and the board itself was damaged slightly.\todo{Definitely want a picture here}
+Instead of attempting to assemble another board by hand, a local third-party company was contacted to assemble the board professionally.
+After delivering the board, stencil, and parts, the second board was assembled.
+
+\begin{figure}[b]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.8\linewidth]{Figures/kicad/QFN-20-1EP_4x4mm}
+    \caption{\emph{QFN-20-1EP\_4x4mm}}
+    \label{fig:FootprintQFN204x4_Original}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.8\linewidth]{Figures/kicad/QFN-20-1EP_4x4mm_RevA}
+    \caption{\emph{QFN-20-1EP\_4x4mm\_RevA}}
+    \label{fig:FootprintQFN204x4_RevA}
+  \end{subfigure}
+  \caption[Two versions of the QFN-20-1EP\_4x4mm package]{The two footprints for components with the \emph{QFN-20-1EP\_4x4mm} package. The original footprint is shown in Figure \ref{fig:FootprintQFN204x4_Original}, while the revised footprint is shown in Figure \ref{fig:FootprintQFN204x4_RevA}}
+  \label{fig:FootprintQFN204x4}
+\end{figure}
+
+The second board was assembled mostly successfully, and allowed the first stage of testing to begin.
+The only issue apart from some ports being too close together with real-world cables was one component having the wrong footprint on the board.
+Unfortunately, the component \emph{U2 (MCP73871-2CCI\_ML)}, is described as using the \emph{QFN-20-1EP\_4x4mm} footprint in it's datasheet\todoquestion{Does this need to be cited? Can you cite a datasheet like this?}, but actually uses a revised version of the footprint, shown in Figure \ref{fig:FootprintQFN204x4}.
+This discrepancy meant that that component could not be soldered, and it's associated circuit would not function properly.
+In this case, the component was a part of the battery charging circuit, causing the entire primary power supply to be unusable.
+Thankfully, as described in Section \ref{sec:Prototyping}, the secondary method of powering the board could be used to test the remaining features of the board.
+After making the necessary fixes, a second round of five PCB boards and a stencil was ordered from JLCPCB.
+Because there was still enough components to assemble three more boards, and no components needed to be changed, no more components were ordered at this stage.
+Once the boards were delivered, the revised board was again sent to be professionally assembled.
+
+Once the third board was assembled, the board could be tested in full.
+While each part of the board was at least partially functional, there were still issues preventing it from working completely.
+In particular, USB devices plugged into any of the ports on the board were able to receive power from the board but were unable to transfer data in either direction.
+\todo[inline]{I am currently going through and diagnosing this issue}
