@@ -2,27 +2,92 @@
 
 \label{Chapter5} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
+\todosection
 
-\section{Requirements}
+
+\section{Requirements}\label{sec:SoftwareRequirements}
+
+Much like the hardware requirements in section \ref{sec:HardwareRequirements}, the primary requirement of the software is to be performant enough to provide the user with a positive experience.
+This is broken down to include being able to stream and decode video over the internet with as little latency as possible, stream inputs from the user to the remote computer, and retain visual fidelity while the host machine is under heavy load.
+While much of the latency between the host and client is due to the network both devices are connected to, there is still some optimizations that can be made to reduce the time between data being send and images being displayed on the screen.
+Similarly, while the rate at which data is transferred between the host and client cannot exceed the speed of the slowest internet connection of the two devices, there can still be a balance between the bandwidth-saving but lower quality streaming seen in Chrome Remote Desktop (\ref{subsec:ChromeRemoteDesktop}), and the local network but higher quality Nvidia Shield (\ref{subsec:NvidiaShieldAndGameStream}).
+To accomplish this, a compression method similar to CRD will be used, but it will not be bound by the traditional web browser which limit CRD due to the software solution being developed as a native application.
+
+As a secondary objective, it would also be beneficial for the software to be able to run on a variety of different hardware platforms in the event the hardware is determined to be infeasible to develop, as discussed in Section \ref{subsec:HardwareCost}.
+
+
+\section{Potential Avenues}\label{sec:PotentialAvenues}
+
+As with any software project, there are many potential ways to solve the problem.
+In many cases, the easiest place to start is to begin by ruling out potential avenues that are not feasible.
+For example, as evident by the number of existing solutions that attempt to solve this problem (Chapter \ref{Chapter3}), taking into special account Nvidia's recent foray into remote gaming with the Shield (\ref{subsec:NvidiaShieldAndGameStream}), it is not reasonable to attempt to create a brand new software solution from scratch with the time and resources available.
+It has taken Nvidia, a company worth hundreds of billions of dollars, years to get to the point they are at now \cite{brown_2013}.
+Developing a rival protocol or new software platform is simply not possible for this project.
+Instead, given that Nvidia's GameStream technology is the current leader in the realm of high-performance remote computing, the best way to build a software product that meets the requirements laid out in Section \ref{sec:ResearchQuestions} is to build upon what already exists.
+
+
+\subsection{NVIDIA GameStream}\label{subsec:NVIDIAGameStream}
+
+\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green,inline]{Should this subsection and the following subsection be top level sections? The organization of the headers is a little strange, but the content flows pretty well}
+
+Unfortunately, the Nvidia GameStream protocol is both proprietary and a closed source project.
+Very little is officially known about the protocol, other than it uses specific video encoders built into Nvidia Graphics cards from the 600 series from 2012 and newer \cite{gamestream_userguide}.
+Apart from that, everything has been researched and reverse engineered by the community.
+A GameStream session is started by first connecting to a host computer which has enabled the GameStream service through Nvidia's GeForce Experience application.
+Once the service is enabled, the computer will listen on port \emph{47989}\todoquestion{Should this be italicized? quoted? plaintext?} for the following web requests:
+\begin{itemize}
+  \item /serverinfo
+  \item /pair
+  \item /unpair
+  \item /applist
+  \item /launch
+  \item /resume
+  \item /cancel
+\end{itemize}
+Once a session has been started with a \emph{/launch} request, raw data covering video, audio, and input is passed back and forth over a number of ports until the session is terminated.
+An end-to-end example of the protocol's usage is as follows:
+
+\begin{enumerate}
+  \item A user knows that a capable host computer is ready to stream at the address \emph{192.168.1.123}.
+        \begin{enumerate}
+          \item This can be confirmed by sending a HTTP GET request \emph{/serverinfo} to the host computer on port \emph{47989}. For example: \newline\emph{http://192.168.1.123:47989/serverinfo?uniqueid=1234}
+        \end{enumerate}
+  \item The user can make a request to \emph{/pair} with a number of parameters to authorize itself with the host.
+        \begin{enumerate}
+          \item Pairing is a two step-process.
+                First, a request to pair is made, at which point the host machine will display a four digit code on it's screen.
+                Then the client must send that code back to the host as a second form of authentication.
+          \item The authentication created by this pairing process lasts until either the client makes an \emph{/unpair} request with it's unique ID or a user on the host machine unpairs the client.
+        \end{enumerate}
+  \item The user can make a request to \emph{/applist} to get a list of applications that the host is able to stream.
+  \item The user can make a request to \emph{/launch} with a number of parameters to instruct the host to create a session with the given settings and launch the specified application.
+        \begin{enumerate}
+          \item The configuration options given include the application to launch, the video resolution to stream, audio setup, input mapping, and multiple forms of authentication.
+        \end{enumerate}
+  \item If the user unexpectedly or accidentally leaves a session without closing it, they can make a request to \emph{/resume} to instruct the host to reopen and resume the session the previous session.
+  \item Once the user is finished, that can make a request to \emph{/cancel} to instruct the host to close the session.
+  \item If the user is completely finished with the host, they can return it to the state they found it in by making a request to \emph{/unpair} with their unique ID, unauthorizing themselves with the host.
+\end{enumerate}
+
+The most difficult part of this process is handling the transfer of data after a session has begun.
+Once a session has launched, data is sent directly between the host and client over a number of ports without going through an easy to understand web protocol.
+This is where the community project Moonlight steps in.
+
+\subsection{Moonlight}\label{subsec:Moonlight}
+
+Moonlight is an unofficial third-party open-source client for the Nvidia GameStream protocol \cite{moonlight}.
+The project is structured as a core library written in \emph{C} with a number of community built clients built on top of it for various platforms.
+In essence, it turns the process described in the previous section (\ref{subsec:NVIDIAGameStream}) into a usable API.
+By reverse engineering the protocol originally implemented by the Nvidia Shield, Moonlight enables the development of a GameStream client for any other platform.
+The Moonlight community has already developed fantastic clients for many platforms such as Windows, Mac, Linux, Android, iOS, Web, and even other gaming consoles.
+All that is needed for the purposes of this project is to make tweaks to best suit the CM4 that drives the hardware and develop a suite of tools to test it's functionality.
+
+
+\section{Developing for ARM}\label{sec:DevelopingForARM}
 
 \todosection
 
 
-\section{Potential Avenues}
-
-\todosection
-
-
-\subsection{NVIDIA GameStream}
-
-\todosection
-
-
-\subsection{Moonlight}
-
-\todosection
-
-
-\section{Developing for ARM}
+\section{Developing Testing and Measurement Tools}\label{sec:DevelopingTestingAndMeasurementTools}
 
 \todosection
