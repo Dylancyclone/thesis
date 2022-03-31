@@ -60,12 +60,12 @@ An end-to-end example of the protocol's usage is as follows:
           \item The authentication created by this pairing process lasts until either the client makes an \emph{/unpair} request with it's unique ID or a user on the host machine unpairs the client.
         \end{enumerate}
   \item The user can make a request to \emph{/applist} to get a list of applications that the host is able to stream.
-  \item The user can make a request to \emph{/launch} with a number of parameters to instruct the host to create a session with the given settings and launch the specified application.
+  \item The user makes a request to \emph{/launch} with a number of parameters to instruct the host to create a session with the given settings and launch the specified application.
         \begin{enumerate}
           \item The configuration options given include the application to launch, the video resolution to stream, audio setup, input mapping, and multiple forms of authentication.
         \end{enumerate}
   \item If the user unexpectedly or accidentally leaves a session without closing it, they can make a request to \emph{/resume} to instruct the host to reopen and resume the session the previous session.
-  \item Once the user is finished, that can make a request to \emph{/cancel} to instruct the host to close the session.
+  \item Once the user is finished, they make a request to \emph{/cancel} to instruct the host to close the session.
   \item If the user is completely finished with the host, they can return it to the state they found it in by making a request to \emph{/unpair} with their unique ID, unauthorizing themselves with the host.
 \end{enumerate}
 
