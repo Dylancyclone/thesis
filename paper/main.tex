@@ -59,6 +59,45 @@ headsepline, % Uncomment to get a line under the header
 \usepackage{longtable} % Tables that span multiple pages
 
 \usepackage{listings} % Required for the code examples
+% Code block settings
+\lstdefinelanguage{custombash}{
+	morekeywords={sudo,cp,rm,mv,read,buildarmimg},
+	morestring=[b]{"},
+	morestring=[b]{'},
+	morecomment=[l]{\#},
+	morekeywords=[2]{pkgname,pkgver,pkgrel,\$pkgname,\$pkgver,\$pkgrel},
+}
+\lstdefinestyle{custombash}{
+  language=custombash,
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+	numbers=left,
+  % xleftmargin=\parindent,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  commentstyle=\itshape\color{green!40!black},
+  keywordstyle=\bfseries\color{orange!70!black},
+  keywordstyle=[2]\bfseries\color{blue!90!black},
+  % identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+\lstdefinestyle{customc}{
+  language=C,
+	morekeywords={uint32_t},
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+  % xleftmargin=\parindent,
+	numbers=left,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{blue!80!black},
+  commentstyle=\itshape\color{green!40!black},
+  % identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+\lstset{escapechar=@,style=customc}
 
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
@@ -229,6 +268,7 @@ In the case where someone already owns a desktop computer and must be mobile, in
 	\textbf{CPU} & \textbf{C}entral \textbf{P}rocessing \textbf{U}nit\\
 	\textbf{CRD} & \textbf{C}hrome \textbf{R}emote \textbf{D}esktop\\
 	\textbf{FFC} & \textbf{F}lat \textbf{F}lexible \textbf{C}able\\
+	\textbf{FPS} & \textbf{F}rames \textbf{P}er \textbf{S}econd\\
 	\textbf{GPU} & \textbf{G}raphics \textbf{P}rocessing \textbf{U}nit\\
 	\textbf{IDE} & \textbf{I}ntegrated \textbf{D}evelopment \textbf{E}nvironment\\
 	\textbf{PC} & \textbf{P}ersonal \textbf{C}omputer\\

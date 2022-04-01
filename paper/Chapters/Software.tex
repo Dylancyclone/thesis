@@ -77,17 +77,71 @@ This is where the community project Moonlight steps in.
 
 Moonlight is an unofficial third-party open-source client for the Nvidia GameStream protocol \cite{moonlight}.
 The project is structured as a core library written in \emph{C} with a number of community built clients built on top of it for various platforms.
-In essence, it turns the process described in the previous section (\ref{subsec:NVIDIAGameStream}) into a usable API.
-By reverse engineering the protocol originally implemented by the Nvidia Shield, Moonlight enables the development of a GameStream client for any other platform.
+In essence, it turns the process described in the previous section (\ref{subsec:NVIDIAGameStream}) into a usable programming interface.
+By reverse engineering the protocol originally implemented by the Nvidia Shield, Moonlight enables the development of a GameStream client for almost any operating system.
 The Moonlight community has already developed fantastic clients for many platforms such as Windows, Mac, Linux, Android, iOS, Web, and even other gaming consoles.
 All that is needed for the purposes of this project is to make tweaks to best suit the CM4 that drives the hardware and develop a suite of tools to test it's functionality.
 
 
 \section{Developing for ARM}\label{sec:DevelopingForARM}
 
-\todosection
+The CM4 runs on a 64-bit ARM Cortex-A72 processor \cite{rpi_cm4}, meaning that applications must be compiled for the \emph{ARM} architecture in order for the CPU to be able to run it.
+If a developer were to write a program on their \emph{x86} architecture Windows desktop computer, they could compile and run their program on any other Windows computer running on the same \emph{x86} architecture.
+They could also compile their application for other operating systems, but the target machine must also be running the same architecture.
+A computer running on another architecture such as \emph{ARM} is not able to run a program compiled for \emph{x86} machines, and a computer running on \emph{x86} is not able to run a program compiled for \emph{ARM} machines or any other architecture.
+
+In order to run the code for the project, given that the CM4 is the only \emph{ARM} computer available for this project, the code must either be compiled on the CM4 or built in a cross-compilation environment on the \emph{x86} machine.
+Using a cross-compilation environment would be overall quicker than that developing on the CM4 itself since it can use the full power of a desktop PC.
+Thankfully, setting up a cross-compilation environment for projects written in \emph{C} is straightforward.
+\emph{CMAKE}, a common compilation tool for \emph{C}, has built-in support for compiling for different target architectures with easy to use libraries.
+What isn't as straightforward however, is building a toolchain to compile the rest of the code for \emph{ARM}.
+
+In order to create the most straightforward experience possible for someone using the hardware for this project, a custom operating system image is created that has all the dependencies, libraries, and applications pre-installed.
+Manjaro provides good tools for building and managing custom images of the Manjaro operating system for \emph{ARM} architectures \cite{manjaro_arm_tools}.
+The only drawback is that it must be run an \emph{ARM} processor, and is much more difficult to run from another architecture.
+To make this process easier to develop, a toolchain was developed that could be run on the CM4 to automatically compile all the necessary code using \emph{cmake}, package all the necessary files using \emph{makepkg}, and build a fresh OS image that is ready to flash.
+This three step script allows the developer to pull the git repository of the project, run a set up script, and then run the build script to compile everything into an immediately deployable OS image.
+The following excerpt details the last step of the process, building the OS image that includes the custom application.
+
+\begin{lstlisting}[style=custombash,firstnumber=72,title=Excerpt from \emph{/code/build.sh}]
+pkgname=$(sed -n 's/^pkgname=//p' ./pkgbuild/PKGBUILD)
+pkgver=$(sed -n 's/^pkgver=//p' ./pkgbuild/PKGBUILD)
+pkgrel=$(sed -n 's/^pkgrel=//p' ./pkgbuild/PKGBUILD)
+# Copy local package to cache to be installed into new image
+sudo cp ./pkgbuild/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst /var/cache/pacman/pkg/
+# Build image
+sudo buildarmimg -d rpi4 -e thesis -i $pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst
+read -s -n 1 -p "Image built, press a key to continue (for sudo)"
+# Remove local package from cache
+sudo rm /var/cache/pacman/pkg/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst -f
+# Move build image to build folder
+sudo mv /var/cache/manjaro-arm-tools/img/* ./build/
+\end{lstlisting}
+
+This script pulls the package's name, version, and release number from the \emph{PKGBUILD} file generated from the packaging step and installs it into the newly created image, which is then moved into the project's build directory.
+This image file is then ready to be flashed and installed like any other operating system.
 
 
 \section{Developing Testing and Measurement Tools}\label{sec:DevelopingTestingAndMeasurementTools}
 
-\todosection
+In order to evaluate the performance of the project, a suite of tools must be developed to test both the newly developed application and the existing solutions.
+To do this, two sets of data will be collected: First, data directly from the application that logs statistics such as the number of frames rendered, dropped, or rendered, and data that runs separately from the application that logs the amount of time it takes for data that is from the client to be realized as a change on the screen.
+The first set of data is important to track the raw performance of the application, statistics like Frames Per Second (FPS)
+
+\begin{lstlisting}[style=customc,firstnumber=23,title=Excerpt from \emph{/src/video/stats.h}]
+typedef struct _VIDEO_STATS {
+  uint32_t receivedFrames;
+  uint32_t decodedFrames;
+  uint32_t renderedFrames;
+  uint32_t totalFrames;
+  uint32_t networkDroppedFrames;
+  uint32_t totalDecodeTime;
+  uint32_t totalRenderTime;
+  uint32_t lastRtt; // Rtt = Round Trip Time
+  uint32_t lastRttVariance;
+  float receivedFps;
+  float decodedFps;
+  float renderedFps;
+  uint32_t measurementStartTimestamp;
+} VIDEO_STATS;
+\end{lstlisting}
