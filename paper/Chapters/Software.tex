@@ -2,7 +2,10 @@
 
 \label{Chapter5} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-\todosection
+The second half of the project is composed of software that is used to connect the client machine to a host computer.
+Designing the software begins with identifying it's requirements in Section \ref{sec:SoftwareRequirements}.
+Then, potential avenues for development are discussed in Section \ref{sec:PotentialAvenues} so that the software does not need to be built from scratch.
+Following that, special considerations must be made while developing the software for the CM4 running on an \emph{ARM} processor in Section \ref{sec:DevelopingForARM}, and the development of the suite of tools used to record data is detailed in Section \ref{sec:DevelopingTestingAndMeasurementTools}.
 
 
 \section{Requirements}\label{sec:SoftwareRequirements}
@@ -80,55 +83,82 @@ The project is structured as a core library written in \emph{C} with a number of
 In essence, it turns the process described in the previous section (\ref{subsec:NVIDIAGameStream}) into a usable programming interface.
 By reverse engineering the protocol originally implemented by the Nvidia Shield, Moonlight enables the development of a GameStream client for almost any operating system.
 The Moonlight community has already developed fantastic clients for many platforms such as Windows, Mac, Linux, Android, iOS, Web, and even other gaming consoles.
-All that is needed for the purposes of this project is to make tweaks to best suit the CM4 that drives the hardware and develop a suite of tools to test it's functionality.
+All that is needed for the purposes of this project is to make a fork of the project that tweaks it to best suit the CM4 that drives the hardware and develop a suite of tools to test it's functionality.
 
 
 \section{Developing for ARM}\label{sec:DevelopingForARM}
 
 The CM4 runs on a 64-bit ARM Cortex-A72 processor \cite{rpi_cm4}, meaning that applications must be compiled for the \emph{ARM} architecture in order for the CPU to be able to run it.
-If a developer were to write a program on their \emph{x86} architecture Windows desktop computer, they could compile and run their program on any other Windows computer running on the same \emph{x86} architecture.
-They could also compile their application for other operating systems, but the target machine must also be running the same architecture.
-A computer running on another architecture such as \emph{ARM} is not able to run a program compiled for \emph{x86} machines, and a computer running on \emph{x86} is not able to run a program compiled for \emph{ARM} machines or any other architecture.
+If a developer were to write a program on their \emph{x86} architecture Windows desktop computer, they could compile their program for any other computer running on the same \emph{x86} architecture, but such a program would be incompatible with an \emph{ARM} processor.
+Similarly, if the program were compiled for \emph{ARM}, that program could be run on an \emph{ARM} computer but not one running \emph{x86}.
 
-In order to run the code for the project, given that the CM4 is the only \emph{ARM} computer available for this project, the code must either be compiled on the CM4 or built in a cross-compilation environment on the \emph{x86} machine.
+In order to run the code for the project, given that the CM4 is the only \emph{ARM} computer available for this project, the code must either be compiled on the CM4 or built in a cross-compilation environment on an \emph{x86} machine.
 Using a cross-compilation environment would be overall quicker than that developing on the CM4 itself since it can use the full power of a desktop PC.
 Thankfully, setting up a cross-compilation environment for projects written in \emph{C} is straightforward.
-\emph{CMAKE}, a common compilation tool for \emph{C}, has built-in support for compiling for different target architectures with easy to use libraries.
+\emph{CMake}, a common compilation tool for \emph{C}, has built-in support for compiling for different target architectures with easy to use libraries.
 What isn't as straightforward however, is building a toolchain to compile the rest of the code for \emph{ARM}.
 
-In order to create the most straightforward experience possible for someone using the hardware for this project, a custom operating system image is created that has all the dependencies, libraries, and applications pre-installed.
-Manjaro provides good tools for building and managing custom images of the Manjaro operating system for \emph{ARM} architectures \cite{manjaro_arm_tools}.
-The only drawback is that it must be run an \emph{ARM} processor, and is much more difficult to run from another architecture.
-To make this process easier to develop, a toolchain was developed that could be run on the CM4 to automatically compile all the necessary code using \emph{cmake}, package all the necessary files using \emph{makepkg}, and build a fresh OS image that is ready to flash.
-This three step script allows the developer to pull the git repository of the project, run a set up script, and then run the build script to compile everything into an immediately deployable OS image.
-The following excerpt details the last step of the process, building the OS image that includes the custom application.
+In order to create an out-of-the-box experience for someone using the hardware for this project, a custom operating system image is created that has all the dependencies, libraries, and applications pre-installed and pre-configured.
+Manjaro provides good tools for building and managing custom images of the Manjaro operating system for \emph{ARM} architectures \cite{manjaro_arm_tools}, with the only drawback being that it is that it must be run on an \emph{ARM} processor, and is much more difficult to run on another architecture.
+To make development easier, a toolchain was built that could be run on the CM4 to build the code that is written on other computers.
+All the developer needs to do is to pull the git repository of the project, run a set up script to install dependencies, and then run the build script to compile everything into an immediately deployable OS image.
+This build script will automatically compile all the necessary code using \emph{cmake}, package all the necessary files using \emph{makepkg}, and build a fresh OS image that is ready to flash.
+The following excerpt details the three functions used to make this work.
 
-\begin{lstlisting}[style=custombash,firstnumber=72,title=Excerpt from \emph{/code/build.sh}]
-pkgname=$(sed -n 's/^pkgname=//p' ./pkgbuild/PKGBUILD)
-pkgver=$(sed -n 's/^pkgver=//p' ./pkgbuild/PKGBUILD)
-pkgrel=$(sed -n 's/^pkgrel=//p' ./pkgbuild/PKGBUILD)
-# Copy local package to cache to be installed into new image
-sudo cp ./pkgbuild/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst /var/cache/pacman/pkg/
-# Build image
-sudo buildarmimg -d rpi4 -e thesis -i $pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst
-read -s -n 1 -p "Image built, press a key to continue (for sudo)"
-# Remove local package from cache
-sudo rm /var/cache/pacman/pkg/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst -f
-# Move build image to build folder
-sudo mv /var/cache/manjaro-arm-tools/img/* ./build/
+\begin{lstlisting}[style=custombash,firstnumber=50,title=Excerpt from \emph{/scripts/build.sh}]
+runMake()
+{
+  mkdir ./moonlight/build # Create build directory
+  cd ./moonlight/build # Go to build directory
+  cmake ../ # Run cmake
+  make # Build the project
+  sudo make install # Install the project
+  sudo ldconfig /usr/local/lib # Link libraries
+  cd "$parent_path" # Go back to original execution location
+}
+
+runPackage()
+{
+  cd ./pkgbuild # Go to pkgbuild directory
+  tar -cf moonlight.tar ../moonlight/ # Create tar archive of the project
+  makepkg -sLfc # Build the package
+  rm moonlight.tar # Remove the tar archive
+  cd "$parent_path" # Go back to original execution location
+}
+
+runBuild()
+{
+  pkgname=$(sed -n 's/^pkgname=//p' ./pkgbuild/PKGBUILD)
+  pkgver=$(sed -n 's/^pkgver=//p' ./pkgbuild/PKGBUILD)
+  pkgrel=$(sed -n 's/^pkgrel=//p' ./pkgbuild/PKGBUILD)
+  # Copy local package to cache to be installed into new image
+  sudo cp ./pkgbuild/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst /var/cache/pacman/pkg/
+  # Build image
+  sudo buildarmimg -d rpi4 -e thesis -i $pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst
+  read -s -n 1 -p "Image built, press a key to continue (for sudo)"
+  # Remove local package from cache
+  sudo rm /var/cache/pacman/pkg/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst -f
+  # Move build image to build folder
+  sudo mv /var/cache/manjaro-arm-tools/img/* ./build/
+  cd "$parent_path" # Go back to original execution location
+}
 \end{lstlisting}
 
-This script pulls the package's name, version, and release number from the \emph{PKGBUILD} file generated from the packaging step and installs it into the newly created image, which is then moved into the project's build directory.
-This image file is then ready to be flashed and installed like any other operating system.
+This script starts by building the forked version of moonlight using \emph{cmake} and \emph{make} and links it's libraries using \emph{ldconfig}.
+Once the application is built, it then builds it into an installable package using \emph{makepkg}, before installing it into the newly created image.
+Finally, the image is moved to the project's build folder where it is ready to be flashed and installed like any other operating system.
 
 
 \section{Developing Testing and Measurement Tools}\label{sec:DevelopingTestingAndMeasurementTools}
 
 In order to evaluate the performance of the project, a suite of tools must be developed to test both the newly developed application and the existing solutions.
-To do this, two sets of data will be collected: First, data directly from the application that logs statistics such as the number of frames rendered, dropped, or rendered, and data that runs separately from the application that logs the amount of time it takes for data that is from the client to be realized as a change on the screen.
-The first set of data is important to track the raw performance of the application, statistics like Frames Per Second (FPS)
+To do this, two sets of data will be collected: First, data is recorded directly from the forked version of moonlight that logs statistics such as the number of frames received, dropped, or rendered, and data that is recorded from a separate application that logs the amount of time it takes for the client machine to receive updates after it sends data to the host machine.
+The first set of data is important to track the raw performance of the application, with statistics like Frames Per Second (FPS) and decoding time which are difficult to record otherwise.
+These statistics provide insight into how performant the application is from a technical perspective.
+The following is a structure that holds the statistics recorded over a session of connecting to a host computer.
+The data recorded is discussed in Chapter \ref{Chapter6}.
 
-\begin{lstlisting}[style=customc,firstnumber=23,title=Excerpt from \emph{/src/video/stats.h}]
+\begin{lstlisting}[style=customc,firstnumber=23,title=Excerpt from \emph{moonlight/src/video/stats.h}]
 typedef struct _VIDEO_STATS {
   uint32_t receivedFrames;
   uint32_t decodedFrames;
@@ -145,3 +175,41 @@ typedef struct _VIDEO_STATS {
   uint32_t measurementStartTimestamp;
 } VIDEO_STATS;
 \end{lstlisting}
+
+The second set of data is recorded by measuring the total amount of time it takes for the host to receive data from the client, and for the client to receive updates back from the host.
+This is done using the following steps once the client is connected to the host:
+
+\begin{enumerate}
+  \item When a user hits a key on the client, record which key was pressed and at what timestamp.
+  \item When the host receives the instruction to press the key from the client, record which key and the timestamp.
+  \item Change the color of the host's screen to a different color.
+  \item When the client detects that the color of the screen has changed, record the current timestamp.
+\end{enumerate}
+
+This records two points of data, the time it takes for the host to implement the actions done by the user, and the time that the user sees the result of their actions.
+Because this method of data collection runs as a separate application on both the client and the server, it can be used to measure the performance of any of the remote desktop applications for comparison.
+This is again discussed in Chapter \ref{Chapter6}.
+
+Both the application running on the client and the server do the same thing, every time a key is pressed, record which key what pressed and at what time, and every time the pixel in the center of the screen changes color, record the new color and at what time it changed.
+This data is written to a Comma Separated Values (CSV) file for later processing.
+To change the color of the screen, a simple web page is used that changes color any time a key is pressed.
+It's source in it's entirety follows:
+
+\begin{lstlisting}[style=customhtml,title=\emph{/datalogger/web/index.html}]
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      let nextColor = "green";
+      document.addEventListener("keydown", () => {
+        document.body.setAttribute("style", "background-color:" + nextColor);
+        nextColor = nextColor === "green" ? "red" : "green";
+      });
+    </script>
+  </head>
+  <body></body>
+</html>
+\end{lstlisting}
+
+This is sufficient to change the color of the screen back and forth between easily distinguishable colors for both the client and the host to record.
+With both of these datasets recorded, the next step is to analyze the data and evaluate the performance of the application.

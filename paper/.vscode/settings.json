@@ -2,7 +2,7 @@
   "editor.fontFamily": "Verdana",
 	"editor.wordWrap": "on",
   "editor.wrappingIndent": "same",
-  "latex-workshop.view.pdf.invert": 0,
+  // "latex-workshop.view.pdf.invert": 0,
   "cSpell.words": [
     "Chromoting",
     "componentization",

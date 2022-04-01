@@ -61,11 +61,19 @@ headsepline, % Uncomment to get a line under the header
 \usepackage{listings} % Required for the code examples
 % Code block settings
 \lstdefinelanguage{custombash}{
-	morekeywords={sudo,cp,rm,mv,read,buildarmimg},
+	morekeywords={sudo,cp,cd,rm,mv,read,mkdir,cmake,make,makepkg,buildarmimg},
 	morestring=[b]{"},
 	morestring=[b]{'},
 	morecomment=[l]{\#},
 	morekeywords=[2]{pkgname,pkgver,pkgrel,\$pkgname,\$pkgver,\$pkgrel},
+}
+\lstdefinelanguage{customhtml}{
+	morekeywords={DOCTYPE,html,lang,head,script,body,let},
+	morekeywords=[2]{nextColor,document,body},
+	morekeywords=[3]{addEventListener,setAttribute},
+	morestring=[b]{"},
+	morestring=[b]{'},
+	morecomment=[l]{\#},
 }
 \lstdefinestyle{custombash}{
   language=custombash,
@@ -79,6 +87,23 @@ headsepline, % Uncomment to get a line under the header
   commentstyle=\itshape\color{green!40!black},
   keywordstyle=\bfseries\color{orange!70!black},
   keywordstyle=[2]\bfseries\color{blue!90!black},
+  % identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+\lstdefinestyle{customhtml}{
+  language=customhtml,
+	morekeywords={uint32_t},
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+  % xleftmargin=\parindent,
+	numbers=left,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{blue!80!black},
+  keywordstyle=[2]\bfseries\color{teal!80!white},
+  keywordstyle=[3]\bfseries\color{orange!70!black},
+  commentstyle=\itshape\color{green!40!black},
   % identifierstyle=\color{blue},
   stringstyle=\color{orange},
 }
@@ -267,6 +292,7 @@ In the case where someone already owns a desktop computer and must be mobile, in
 	\textbf{CM4} & Raspberry Pi \textbf{C}ompute \textbf{M}odule \textbf{4}\\
 	\textbf{CPU} & \textbf{C}entral \textbf{P}rocessing \textbf{U}nit\\
 	\textbf{CRD} & \textbf{C}hrome \textbf{R}emote \textbf{D}esktop\\
+	\textbf{CSV} & \textbf{C}omma \textbf{S}eparated \textbf{V}alues\\
 	\textbf{FFC} & \textbf{F}lat \textbf{F}lexible \textbf{C}able\\
 	\textbf{FPS} & \textbf{F}rames \textbf{P}er \textbf{S}econd\\
 	\textbf{GPU} & \textbf{G}raphics \textbf{P}rocessing \textbf{U}nit\\
