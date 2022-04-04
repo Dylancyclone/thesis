@@ -22,6 +22,7 @@ The tests are performed multiple times under the following conditions:
 \end{itemize}
 
 \noindent
+This is to examine whether each application can perform under intensive conditions.
 For each test, the following steps are performed:
 
 \begin{enumerate}
@@ -60,7 +61,13 @@ This reveals the amount of delay the user experiences between when they press a 
 
 \section{Responsivity and Latency}
 
-\todosection
+The first factor in determining the performance of the application is to take a look at how responsive it is to use.
+Responsivity is defined as how quick the application responds to inputs and how quickly the user can see the results of their inputs.
+This is important for general user experience and applications where continuous input is required.
+This is also what is generally refered to when determining whether an application has a positive user experience, since a program that can take seconds to respond to the user begets lower productivity and a more frustrating experience.
+To analyse this, two points of data are recorded: First, the amount of time between when the client records a keystroke and when it is actually inputted on the host machine, and seccondly, the amount of time between the host machine updating their screen and when the client actually displays that update.
+The first datum is generally referred to as the latency of the application, since even though each trial is done using the same network setup different programs may have different optimizations built in that reduce the time needed for the host to implement keystrokes made by the client.
+Figure \ref{fig:InputDelay} shows the amount of time between the client and the host registering the keystroke under the different test conditions.
 
 \begin{figure}[h]
   \centering
@@ -143,6 +150,19 @@ This reveals the amount of delay the user experiences between when they press a 
   \label{fig:InputDelay}
 \end{figure}
 
+Each application does a good job sending data from the client to the host in a timely manner, with the majority of keystrokes being realized within a tenth of a seccond of being pressed on the client machine.
+The forked Moonlight implementation keeps a latency under 20ms regardless of the load of the host machine, with more than 75\% of all keystrokes being realized within 10ms.
+CRD proves to be a CPU limited application, with latency while idle or under GPU load also staying below 20ms, but climbing up above 50ms when under CPU load.
+This is important to keep in mind when thinking about what sort of situations the host machine will be in while being accessed.
+If the user is going to be rendering video remotely, a GPU intensive process, the latency of the stream wont be impacted, but if the user is going to be running a CPU intensive process, the latency can be expected to be negatively impacted.
+RDP has a similar story, with extremely low latency while idle or under GPU load, and upwards of 40ms while under CPU load.
+VNC has the highest variance, with no discernable affinity to any kind of load.
+This lines up with it's intended use described in Section \ref{subsec:VirtualNetworkComputing}, being the simplest and most straightforward method of remote desktop control without much focus on performance or security.
+That's not so say VNC is unsuable or even difficult to use; latency of 160ms is still usable in all but the most precise situations.
+Though this is only one metric to consider, the other is the amount of time it take for the client to display the results of their input.
+This is recorded as the amount of time it takes between the host machine changing the color of it's screen and the client rendering the change.
+Figure \ref{fig:ColorDelay} shows the amount of time for each application under each condition.
+
 \begin{figure}[h]
   \centering
   \begin{tikzpicture}
@@ -152,7 +172,7 @@ This reveals the amount of delay the user experiences between when they press a 
       scale only axis,
       height=8cm,
       width=\textwidth,
-      ymin=0,ymax=200,
+      ymin=0,ymax=250,
       cycle list={{black},{blue},{red}},
       legend style={
           legend pos=outer north east,
@@ -220,9 +240,25 @@ This reveals the amount of delay the user experiences between when they press a 
       \legend{Ideal,CPU stressed,GPU stressed}
     \end{axis}
   \end{tikzpicture}
-  \caption[Color Delay Data]{Time for client to receive update to screen.}
+  \caption[Color Delay Data]{Time for client to render update to the screen.}
   \label{fig:ColorDelay}
 \end{figure}
+
+This data demonstrates a similar but more extreme pattern to the input delay figure, with most application performing well under ideal conditions but struggling a little under high stress.
+The forked Moonlight implementation is able to render updates on the client device in under 70ms in nearly all cases, with an even spread regardless of the load of the host machine.
+CRD is able to render all updates in under 160ms while the host is idle, but struggles to keep up while under load.
+Again, CRD struggles the most while under CPU load, with the quickest update happening in just under 200ms, and the median update taking over a full second.
+CRD performs a little better under GPU load, but still experiences much high delays with the median update taking over half of a second.
+Both of these values push the usability of the system as any kind of intensive program will bring the responsivity of the application to a crawl.
+RDP again performs extremely well, with all render updates taking less than 50ms while under ideal conditions or GPU load, and all updates taking less that 70ms while under full CPU load.
+VNC is again the slowest and most inconsistent application, with all conditions resulting in a frequent render delays of more than a quarter of a second.
+This makes VNC considerably less suitable for the task at hand.
+
+The delay, however, is only half the story in this case.
+Another factor to consider is the percentage of updates that are not rendered by the client. 
+This, often referred to as dropped frames, records how much data is lost when the host sends it's screen to the client device.
+A higher percentage results in a more choppy and difficult to use experience, with a 50\% loss meaning that 50\% of the updates sent by the host are not rendered by the client.
+Figure \ref{fig:ColorDelayLoss} shows the percentage of color changes not rendered by the client for each of the load conditions.
 
 \begin{figure}[h]
   \centering
@@ -277,17 +313,29 @@ This reveals the amount of delay the user experiences between when they press a 
   \label{fig:ColorDelayLoss}
 \end{figure}
 
-
-\section{Performance}
-
-\todosection
+These data points adds context to the previous figures, showing where the applications struggle to keep up with sending data back to the client device.
+The forked Moonlight implementation does not experience any frame drops, as does CRD under ideal conditions.
+But once the host machine is put under heavy load, CRD begins to drop frames, with a few being dropped under GPU stress, and 32\% of frames being dropped while under CPU stress.
+This can make CRD unpleasent and frustrating to use while the host is running a CPU intensive program as not only does the client take much more time to update the screen to reflect that status of the host computer, but many of the updates are lost completely and not shown to the user.
+RDP is also able to display all the data sent by the host without dropping any frames under any condition.
+VNC is again proved to be the least performant, with frames being dropped regardless of the load being put on the host computer.
+This is still in line with it's intended use of basic remote control, though it is dissapointing to see about 15\% loss even under ideal conditions.
 
 
 \section{Quality}
 
-\todosection
+Apart from the performance of each application, the quality of the user experience must also be taken into account when considering each application.
+When analyzing the forked version of Moonlight, specific quantitative data described in Section \ref{sec:DevelopingTestingAndMeasurementTools} can be collected directly from the application while it is running.
+\todo{put in data}
 
+Chrome Remote Desktop also provides some quantitative data.\todo{V8 compression}
+
+RDP does not provide quantitative to analyse it's quality, but speaking from a user experience perspective\dots
+
+VNC provides little in the form of quality statistics, but given it's performance and responsiveness discussed in the previous section, it is clear that the quality of the stream suffers heavily whenever the host is under load.
 
 \section{Summary}
+
+By combining the information from the previous two sections, a wholistic picture of the performance of each application can be drawn.
 
 \todosection
