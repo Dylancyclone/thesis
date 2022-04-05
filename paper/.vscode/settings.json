@@ -2,8 +2,23 @@
   "editor.fontFamily": "Verdana",
 	"editor.wordWrap": "on",
   "editor.wrappingIndent": "same",
-  // "latex-workshop.view.pdf.invert": 0,
+  "latex-workshop.view.pdf.invert": 0,
   "cSpell.words": [
-    "Responsivity"
+    "Chromoting",
+    "componentization",
+    "datasheet",
+    "datasheets",
+    "Digi",
+    "JLCPCB",
+    "keyframes",
+    "numpad",
+    "pinout",
+    "reengineered",
+    "reengineering",
+    "repairability",
+    "Responsivity",
+    "revisioning",
+    "unauthorizing",
+    "unpairs"
   ]
 }

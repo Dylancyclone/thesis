@@ -1,28 +1,215 @@
-\chapter{Developing the Software} % Main chapter title
+\chapter{Developing the Software}
 
-\label{Chapter5} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\label{Chapter5}
 
-
-\section{Requirements}
-
-\todosection
-
-
-\section{Potential Avenues}
-
-\todosection
+The second half of the project is composed of software that is used to connect the client machine to a host computer.
+Designing the software begins with identifying it's requirements in Section \ref{sec:SoftwareRequirements}.
+Then, potential avenues for development are discussed in Section \ref{sec:PotentialAvenues} so that the software does not need to be built from scratch.
+Following that, special considerations must be made while developing the software for the CM4 running on an \emph{ARM} processor in Section \ref{sec:DevelopingForARM}, and the development of the suite of tools used to record data is detailed in Section \ref{sec:DevelopingTestingAndMeasurementTools}.
 
 
-\subsection{NVIDIA GameStream}
+\section{Requirements}\label{sec:SoftwareRequirements}
 
-\todosection
+Much like the hardware requirements in section \ref{sec:HardwareRequirements}, the primary requirement of the software is to be performant enough to provide the user with a positive experience.
+This is broken down to include being able to stream and decode video over the internet with as little latency as possible, stream inputs from the user to the remote computer, and retain visual fidelity while the host machine is under heavy load.
+While much of the latency between the host and client is due to the network both devices are connected to, there is still some optimizations that can be made to reduce the time between data being send and images being displayed on the screen.
+Similarly, while the rate at which data is transferred between the host and client cannot exceed the speed of the slowest internet connection of the two devices, there can still be a balance between the bandwidth-saving but lower quality streaming seen in Chrome Remote Desktop (\ref{subsec:ChromeRemoteDesktop}), and the local network but higher quality Nvidia Shield (\ref{subsec:NvidiaShieldAndGameStream}).
+To accomplish this, a compression method similar to CRD will be used, but it will not be bound by the traditional web browser which limit CRD due to the software solution being developed as a native application.
+
+As a secondary objective, it would also be beneficial for the software to be able to run on a variety of different hardware platforms in the event the hardware is determined to be infeasible to develop, as discussed in Section \ref{subsec:HardwareCost}.
 
 
-\subsection{Moonlight}
+\section{Potential Avenues}\label{sec:PotentialAvenues}
 
-\todosection
+As with any software project, there are many potential ways to solve the problem.
+In many cases, the easiest place to start is to begin by ruling out potential avenues that are not feasible.
+For example, as evident by the number of existing solutions that attempt to solve this problem (Chapter \ref{Chapter3}), taking into special account Nvidia's recent foray into remote gaming with the Shield (\ref{subsec:NvidiaShieldAndGameStream}), it is not reasonable to attempt to create a brand new software solution from scratch with the time and resources available.
+It has taken Nvidia, a company worth hundreds of billions of dollars, years to get to the point they are at now \cite{brown_2013}.
+Developing a rival protocol or new software platform is simply not possible for this project.
+Instead, given that Nvidia's GameStream technology is the current leader in the realm of high-performance remote computing, the best way to build a software product that meets the requirements laid out in Section \ref{sec:ResearchQuestions} is to build upon what already exists.
 
 
-\section{Developing for ARM}
+\subsection{NVIDIA GameStream}\label{subsec:NVIDIAGameStream}
 
-\todosection
+\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green,inline]{Should this subsection and the following subsection be top level sections? The organization of the headers is a little strange, but the content flows pretty well}
+
+Unfortunately, the Nvidia GameStream protocol is both proprietary and a closed source project.
+Very little is officially known about the protocol, other than it uses specific video encoders built into Nvidia Graphics cards from the 600 series from 2012 and newer \cite{gamestream_userguide}.
+Apart from that, everything has been researched and reverse engineered by the community.
+A GameStream session is started by first connecting to a host computer which has enabled the GameStream service through Nvidia's GeForce Experience application.
+Once the service is enabled, the computer will listen on port \emph{47989}\todoquestion{Should this be italicized? quoted? plaintext?} for the following web requests:
+\begin{itemize}
+  \item /serverinfo
+  \item /pair
+  \item /unpair
+  \item /applist
+  \item /launch
+  \item /resume
+  \item /cancel
+\end{itemize}
+Once a session has been started with a \emph{/launch} request, raw data covering video, audio, and input is passed back and forth over a number of ports until the session is terminated.
+An end-to-end example of the protocol's usage is as follows:
+
+\begin{enumerate}
+  \item A user knows that a capable host computer is ready to stream at the address \emph{192.168.1.123}.
+        \begin{enumerate}
+          \item This can be confirmed by sending a HTTP GET request \emph{/serverinfo} to the host computer on port \emph{47989}. For example: \newline\emph{http://192.168.1.123:47989/serverinfo?uniqueid=1234}
+        \end{enumerate}
+  \item The user can make a request to \emph{/pair} with a number of parameters to authorize itself with the host.
+        \begin{enumerate}
+          \item Pairing is a two step-process.
+                First, a request to pair is made, at which point the host machine will display a four digit code on it's screen.
+                Then the client must send that code back to the host as a second form of authentication.
+          \item The authentication created by this pairing process lasts until either the client makes an \emph{/unpair} request with it's unique ID or a user on the host machine unpairs the client.
+        \end{enumerate}
+  \item The user can make a request to \emph{/applist} to get a list of applications that the host is able to stream.
+  \item The user makes a request to \emph{/launch} with a number of parameters to instruct the host to create a session with the given settings and launch the specified application.
+        \begin{enumerate}
+          \item The configuration options given include the application to launch, the video resolution to stream, audio setup, input mapping, and multiple forms of authentication.
+        \end{enumerate}
+  \item If the user unexpectedly or accidentally leaves a session without closing it, they can make a request to \emph{/resume} to instruct the host to reopen and resume the session the previous session.
+  \item Once the user is finished, they make a request to \emph{/cancel} to instruct the host to close the session.
+  \item If the user is completely finished with the host, they can return it to the state they found it in by making a request to \emph{/unpair} with their unique ID, unauthorizing themselves with the host.
+\end{enumerate}
+
+The most difficult part of this process is handling the transfer of data after a session has begun.
+Once a session has launched, data is sent directly between the host and client over a number of ports without going through an easy to understand web protocol.
+This is where the community project Moonlight steps in.
+
+\subsection{Moonlight}\label{subsec:Moonlight}
+
+Moonlight is an unofficial third-party open-source client for the Nvidia GameStream protocol \cite{moonlight}.
+The project is structured as a core library written in \emph{C} with a number of community built clients built on top of it for various platforms.
+In essence, it turns the process described in the previous section (\ref{subsec:NVIDIAGameStream}) into a usable programming interface.
+By reverse engineering the protocol originally implemented by the Nvidia Shield, Moonlight enables the development of a GameStream client for almost any operating system.
+The Moonlight community has already developed fantastic clients for many platforms such as Windows, Mac, Linux, Android, iOS, Web, and even other gaming consoles.
+All that is needed for the purposes of this project is to make a fork of the project that tweaks it to best suit the CM4 that drives the hardware and develop a suite of tools to test it's functionality.
+
+
+\section{Developing for ARM}\label{sec:DevelopingForARM}
+
+The CM4 runs on a 64-bit ARM Cortex-A72 processor \cite{rpi_cm4}, meaning that applications must be compiled for the \emph{ARM} architecture in order for the CPU to be able to run it.
+If a developer were to write a program on their \emph{x86} architecture Windows desktop computer, they could compile their program for any other computer running on the same \emph{x86} architecture, but such a program would be incompatible with an \emph{ARM} processor.
+Similarly, if the program were compiled for \emph{ARM}, that program could be run on an \emph{ARM} computer but not one running \emph{x86}.
+
+In order to run the code for the project, given that the CM4 is the only \emph{ARM} computer available for this project, the code must either be compiled on the CM4 or built in a cross-compilation environment on an \emph{x86} machine.
+Using a cross-compilation environment would be overall quicker than that developing on the CM4 itself since it can use the full power of a desktop PC.
+Thankfully, setting up a cross-compilation environment for projects written in \emph{C} is straightforward.
+\emph{CMake}, a common compilation tool for \emph{C}, has built-in support for compiling for different target architectures with easy to use libraries.
+What isn't as straightforward however, is building a toolchain to compile the rest of the code for \emph{ARM}.
+
+In order to create an out-of-the-box experience for someone using the hardware for this project, a custom operating system image is created that has all the dependencies, libraries, and applications pre-installed and pre-configured.
+Manjaro provides good tools for building and managing custom images of the Manjaro operating system for \emph{ARM} architectures \cite{manjaro_arm_tools}, with the only drawback being that it is that it must be run on an \emph{ARM} processor, and is much more difficult to run on another architecture.
+To make development easier, a toolchain was built that could be run on the CM4 to build the code that is written on other computers.
+All the developer needs to do is to pull the git repository of the project, run a set up script to install dependencies, and then run the build script to compile everything into an immediately deployable OS image.
+This build script will automatically compile all the necessary code using \emph{cmake}, package all the necessary files using \emph{makepkg}, and build a fresh OS image that is ready to flash.
+The following excerpt details the three functions used to make this work.
+
+\begin{lstlisting}[style=custombash,firstnumber=50,title=Excerpt from \emph{/scripts/build.sh}]
+runMake()
+{
+  mkdir ./moonlight/build # Create build directory
+  cd ./moonlight/build # Go to build directory
+  cmake ../ # Run cmake
+  make # Build the project
+  sudo make install # Install the project
+  sudo ldconfig /usr/local/lib # Link libraries
+  cd "$parent_path" # Go back to original execution location
+}
+
+runPackage()
+{
+  cd ./pkgbuild # Go to pkgbuild directory
+  tar -cf moonlight.tar ../moonlight/ # Create tar archive of the project
+  makepkg -sLfc # Build the package
+  rm moonlight.tar # Remove the tar archive
+  cd "$parent_path" # Go back to original execution location
+}
+
+runBuild()
+{
+  pkgname=$(sed -n 's/^pkgname=//p' ./pkgbuild/PKGBUILD)
+  pkgver=$(sed -n 's/^pkgver=//p' ./pkgbuild/PKGBUILD)
+  pkgrel=$(sed -n 's/^pkgrel=//p' ./pkgbuild/PKGBUILD)
+  # Copy local package to cache to be installed into new image
+  sudo cp ./pkgbuild/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst /var/cache/pacman/pkg/
+  # Build image
+  sudo buildarmimg -d rpi4 -e thesis -i $pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst
+  read -s -n 1 -p "Image built, press a key to continue (for sudo)"
+  # Remove local package from cache
+  sudo rm /var/cache/pacman/pkg/$pkgname-$pkgver-$pkgrel-aarch64.pkg.tar.zst -f
+  # Move build image to build folder
+  sudo mv /var/cache/manjaro-arm-tools/img/* ./build/
+  cd "$parent_path" # Go back to original execution location
+}
+\end{lstlisting}
+
+This script starts by building the forked version of moonlight using \emph{cmake} and \emph{make} and links it's libraries using \emph{ldconfig}.
+Once the application is built, it then builds it into an installable package using \emph{makepkg}, before installing it into the newly created image.
+Finally, the image is moved to the project's build folder where it is ready to be flashed and installed like any other operating system.
+
+
+\section{Developing Testing and Measurement Tools}\label{sec:DevelopingTestingAndMeasurementTools}
+
+In order to evaluate the performance of the project, a suite of tools must be developed to test both the newly developed application and the existing solutions.
+To do this, two sets of data will be collected: First, data is recorded directly from the forked version of moonlight that logs statistics such as the number of frames received, dropped, or rendered, and data that is recorded from a separate application that logs the amount of time it takes for the client machine to receive updates after it sends data to the host machine.
+The first set of data is important to track the raw performance of the application, with statistics like Frames Per Second (FPS) and decoding time which are difficult to record otherwise.
+These statistics provide insight into how performant the application is from a technical perspective.
+The following is a structure that holds the statistics recorded over a session of connecting to a host computer.
+The data recorded is discussed in Chapter \ref{Chapter6}.
+
+\begin{lstlisting}[style=customc,firstnumber=23,title=Excerpt from \emph{moonlight/src/video/stats.h}]
+typedef struct _VIDEO_STATS {
+  uint32_t receivedFrames;
+  uint32_t decodedFrames;
+  uint32_t renderedFrames;
+  uint32_t totalFrames;
+  uint32_t networkDroppedFrames;
+  uint32_t totalDecodeTime;
+  uint32_t totalRenderTime;
+  uint32_t lastRtt; // Rtt = Round Trip Time
+  uint32_t lastRttVariance;
+  float receivedFps;
+  float decodedFps;
+  float renderedFps;
+  uint32_t measurementStartTimestamp;
+} VIDEO_STATS;
+\end{lstlisting}
+
+The second set of data is recorded by measuring the total amount of time it takes for the host to receive data from the client, and for the client to receive updates back from the host.
+This is done using the following steps once the client is connected to the host:
+
+\begin{enumerate}
+  \item When a user hits a key on the client, record which key was pressed and at what timestamp.
+  \item When the host receives the instruction to press the key from the client, record which key and the timestamp.
+  \item Change the color of the host's screen to a different color.
+  \item When the client detects that the color of the screen has changed, record the current timestamp.
+\end{enumerate}
+
+This records two points of data, the time it takes for the host to implement the actions done by the user, and the time that the user sees the result of their actions.
+Because this method of data collection runs as a separate application on both the client and the server, it can be used to measure the performance of any of the remote desktop applications for comparison.
+This is again discussed in Chapter \ref{Chapter6}.
+
+Both the application running on the client and the server do the same thing, every time a key is pressed, record which key what pressed and at what time, and every time the pixel in the center of the screen changes color, record the new color and at what time it changed.
+This data is written to a Comma Separated Values (CSV) file for later processing.
+To change the color of the screen, a simple web page is used that changes color any time a key is pressed.
+It's source in it's entirety follows:
+
+\begin{lstlisting}[style=customhtml,title=\emph{/datalogger/web/index.html}]
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      let nextColor = "green";
+      document.addEventListener("keydown", () => {
+        document.body.setAttribute("style", "background-color:" + nextColor);
+        nextColor = nextColor === "green" ? "red" : "green";
+      });
+    </script>
+  </head>
+  <body></body>
+</html>
+\end{lstlisting}
+
+This is sufficient to change the color of the screen back and forth between easily distinguishable colors for both the client and the host to record.
+With both of these datasets recorded, the next step is to analyze the data and evaluate the performance of the application.

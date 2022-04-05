@@ -247,6 +247,8 @@
 \usepackage{xcolor} % Required for specifying custom colours
 
 \colorlet{mdtRed}{red!50!black}
+\definecolor{ASUGold}{HTML}{FFC627}
+\definecolor{ASUMaroon}{HTML}{8C1D40}
 
 %----------------------------------------------------------------------------------------
 %	MARGINS
@@ -523,9 +525,9 @@ bookmarksopen=true,
 bookmarksopenlevel=0,
 hypertexnames=false,
 colorlinks=true,% Set to false to disable coloring links
-citecolor=magenta,% The color of citations
-linkcolor=red,% The color of references to document elements (sections, figures, etc)
-urlcolor=mdtRed,% The color of hyperlinks (URLs)
+citecolor=ASUMaroon,% The color of citations
+linkcolor=ASUMaroon,% The color of references to document elements (sections, figures, etc)
+urlcolor=ASUMaroon,% The color of hyperlinks (URLs)
 pdfstartview={FitV},
 unicode,
 breaklinks=true,

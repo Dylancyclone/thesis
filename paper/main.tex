@@ -23,7 +23,7 @@
 english, % ngerman for German
 singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
 % draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
-% final, % Uncomment to enable final mode (hide todos)
+final, % Uncomment to enable final mode (hide todos)
 %nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
 %liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
 %toctotoc, % Uncomment to add the main table of contents to the table of contents
@@ -39,15 +39,103 @@ headsepline, % Uncomment to get a line under the header
 
 \usepackage{mathpazo} % Use the Palatino font by default
 
-\usepackage[backend=bibtex,style=authoryear,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
+\usepackage[backend=bibtex,natbib=true]{biblatex} % Use the bibtex backend
 
-\addbibresource{example.bib} % The filename of the bibliography
+\addbibresource{bibliography.bib} % The filename of the bibliography
 
 \usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
 
+\usepackage{wrapfig} % Required to wrap figures
+\usepackage{subcaption} % Required for subfigures
+
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny,obeyFinal]{todonotes} % Todo notes in margin
 
+\setlength{\marginparwidth}{3cm} % The width of the margin for todo notes
+\newcommand{\todoadvisor}[1]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue]{#1}}
+\newcommand{\todoquestion}[1]{\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green]{#1}}
 \newcommand{\todosection}{\todo[linecolor=olive,backgroundcolor=olive!25,bordercolor=olive,inline]{TODO}}
+
+\usepackage{csvsimple} % Import CSV files for use in tables
+\usepackage{longtable} % Tables that span multiple pages
+
+\usepackage{listings} % Required for the code examples
+% Code block settings
+\lstdefinelanguage{custombash}{
+	morekeywords={sudo,cp,cd,rm,mv,read,mkdir,cmake,make,makepkg,buildarmimg},
+	morestring=[b]{"},
+	morestring=[b]{'},
+	morecomment=[l]{\#},
+	morekeywords=[2]{pkgname,pkgver,pkgrel,\$pkgname,\$pkgver,\$pkgrel},
+}
+\lstdefinelanguage{customhtml}{
+	morekeywords={DOCTYPE,html,lang,head,script,body,let},
+	morekeywords=[2]{nextColor,document,body},
+	morekeywords=[3]{addEventListener,setAttribute},
+	morestring=[b]{"},
+	morestring=[b]{'},
+	morecomment=[l]{\#},
+}
+\lstdefinestyle{custombash}{
+  language=custombash,
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+	numbers=left,
+  % xleftmargin=\parindent,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  commentstyle=\itshape\color{green!40!black},
+  keywordstyle=\bfseries\color{orange!70!black},
+  keywordstyle=[2]\bfseries\color{blue!90!black},
+  % identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+\lstdefinestyle{customhtml}{
+  language=customhtml,
+	morekeywords={uint32_t},
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+  % xleftmargin=\parindent,
+	numbers=left,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{blue!80!black},
+  keywordstyle=[2]\bfseries\color{teal!80!white},
+  keywordstyle=[3]\bfseries\color{orange!70!black},
+  commentstyle=\itshape\color{green!40!black},
+  % identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+\lstdefinestyle{customc}{
+  language=C,
+	morekeywords={uint32_t},
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+  % xleftmargin=\parindent,
+	numbers=left,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{blue!80!black},
+  commentstyle=\itshape\color{green!40!black},
+  % identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+\lstdefinestyle{plaintext}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+	numbers=none,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+}
+\lstset{escapechar=@,style=customc}
+
+
+\usepackage{pgfplots} % Required for the plots
+\usepgfplotslibrary{statistics}
+\pgfplotsset{compat=1.8}
 
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
@@ -67,7 +155,7 @@ headsepline, % Uncomment to get a line under the header
 %	THESIS INFORMATION
 %----------------------------------------------------------------------------------------
 
-\thesistitle{Building a Mobile Device that Uses the Power of a Desktop Computer} % Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
+\thesistitle{Building a Mobile Device that Leverages the Power of a Desktop Computer} % Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
 \supervisor{Dr. Robert \textsc{Heinrichs}} % Your supervisor's name, this is used in the title page, print it elsewhere with \supname
 \examiner{} % Your examiner's name, this is not currently used anywhere in the template, print it elsewhere with \examname
 \degree{Software Engineering} % Your degree name, this is used in the title page and abstract, print it elsewhere with \degreename
@@ -102,7 +190,7 @@ headsepline, % Uncomment to get a line under the header
 
 		\vspace*{.06\textheight}
 		{\scshape\LARGE \univname\par}\vspace{1.5cm} % University name
-		\textsc{\Large Undergraduate Thesis}\\[0.5cm] % Thesis type
+		\textsc{\Large Honors Thesis}\\[0.5cm] % Thesis type
 
 		\HRule \\[0.4cm] % Horizontal line
 		{\huge \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
@@ -177,8 +265,15 @@ headsepline, % Uncomment to get a line under the header
 %----------------------------------------------------------------------------------------
 
 \begin{abstract}
-	\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-	The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots
+\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+
+With the recent focus of attention towards remote work and mobile computing, the possibility of taking a powerful workstation wherever needed is enticing.
+However, even emerging laptops today struggle to compete with desktops in terms of cost, maintenance, and future upgrades.
+The price point of a powerful laptop is considerably higher compared to an equally powerful desktop computer, and most laptops are manufactured in a way that makes upgrading parts of the machine difficult or impossible, forcing a complete purchase in the event of failure or a component needing an upgrade.
+
+In the case where someone already owns a desktop computer and must be mobile, instead of needing to purchase a second device at full price, it may be possible to develop a low-cost computer that has just enough power to connect to the existing desktop and run all processing there, using the mobile device only as a user interface.
+
+
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -187,7 +282,9 @@ headsepline, % Uncomment to get a line under the header
 
 \begin{acknowledgements}
 	\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
-	The acknowledgments and the people to thank go here, don't forget to include your project advisor\ldots
+	I would like to express my graditude to my thesis director, Dr. Robert Heinrichs, and to each of my committee members, Professor Ruben Acu\~{n}a and Dr. Shawn Jordan, for their help in the development of this thesis.
+	Without their guidance, I would not have been able to step so far outside of my comfort zone and learn about so many new topics to make this thesis happen.
+	I would also like to thank my friends and family who were always there to bounce ideas off of and inevitably tell me when I was trying to fit too many words into a single section.
 \end{acknowledgements}
 
 %----------------------------------------------------------------------------------------
@@ -205,10 +302,22 @@ headsepline, % Uncomment to get a line under the header
 %----------------------------------------------------------------------------------------
 
 \begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
-
+	\addchaptertocentry{\abbrevname} % Add the Abbreviations to the table of contents
+	\textbf{BOM} & \textbf{B}ill \textbf{O}f \textbf{M}aterials\\
+	\textbf{CM4} & Raspberry Pi \textbf{C}ompute \textbf{M}odule \textbf{4}\\
+	\textbf{CPU} & \textbf{C}entral \textbf{P}rocessing \textbf{U}nit\\
 	\textbf{CRD} & \textbf{C}hrome \textbf{R}emote \textbf{D}esktop\\
+	\textbf{CSV} & \textbf{C}omma \textbf{S}eparated \textbf{V}alues\\
+	\textbf{FFC} & \textbf{F}lat \textbf{F}lexible \textbf{C}able\\
+	\textbf{FPS} & \textbf{F}rames \textbf{P}er \textbf{S}econd\\
+	\textbf{GPU} & \textbf{G}raphics \textbf{P}rocessing \textbf{U}nit\\
+	\textbf{IDE} & \textbf{I}ntegrated \textbf{D}evelopment \textbf{E}nvironment\\
+	\textbf{PC} & \textbf{P}ersonal \textbf{C}omputer\\
 	\textbf{PCB} & \textbf{P}rinted \textbf{C}ircuit \textbf{B}oard\\
 	\textbf{RDP} & \textbf{R}emote \textbf{D}esktop \textbf{P}rotocol\\
+	\textbf{RTC} & \textbf{R}eal \textbf{T}ime \textbf{C}lock\\
+	\textbf{SBC} & \textbf{S}ingle \textbf{B}oard \textbf{C}omputer\\
+	\textbf{SMD} & \textbf{S}urface \textbf{M}ounted \textbf{D}evice\\
 	\textbf{SSH} & \textbf{S}ecure \textbf{Sh}ell (Protocol)\\
 	\textbf{VNC} & \textbf{V}irtual \textbf{N}etwork \textbf{C}omputing\\
 
@@ -247,7 +356,7 @@ headsepline, % Uncomment to get a line under the header
 %	DEDICATION
 %----------------------------------------------------------------------------------------
 
-\dedicatory{For/Dedicated to/To my\ldots}
+\dedicatory{For my parents, and their endless support, encouragement, and guidance.}
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - CHAPTERS
@@ -260,6 +369,7 @@ headsepline, % Uncomment to get a line under the header
 % Include the chapters of the thesis as separate files from the Chapters folder
 % Uncomment the lines as you write the chapters
 
+% \include{Chapters/Example}
 \include{Chapters/Introduction}
 \include{Chapters/Background}
 \include{Chapters/StateOfTheArt}
@@ -278,7 +388,7 @@ headsepline, % Uncomment to get a line under the header
 % Uncomment the lines as you write the Appendices
 
 \include{Appendices/AppendixA}
-%\include{Appendices/AppendixB}
+\include{Appendices/AppendixB}
 %\include{Appendices/AppendixC}
 
 %----------------------------------------------------------------------------------------
