@@ -1,6 +1,6 @@
-\chapter{Developing the Hardware} % Main chapter title
+\chapter{Developing the Hardware}
 
-\label{Chapter4} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\label{Chapter4}
 
 There are a lot of factors that go into designing and building an electrical system that fits the needs for this project.
 This process begins by outlining the requirements in Section \ref{sec:HardwareRequirements}, followed by describing the process and methodology of choosing parts in Section \ref{sec:ChoosingParts}.
@@ -262,7 +262,7 @@ The chip connects to each of the four downstream USB ports and handles all of th
     \caption{The physical PCB}
     \label{fig:HDMICircuitReal}
   \end{subfigure}
-  \caption{The PCB's HDMI circuit}
+  \caption[PCB HDMI Circuit]{The PCB's HDMI circuit}
   \label{fig:HDMICircuit}
 \end{figure}
 
@@ -287,7 +287,7 @@ The chip connects to each of the four downstream USB ports and handles all of th
     \caption{The physical PCB}
     \label{fig:CM4CircuitReal}
   \end{subfigure}
-  \caption{The circuitry surrounding the CM4's two mezzanine connectors}
+  \caption[PCB CM4 Circuit]{The circuitry surrounding the CM4's two mezzanine connectors}
   \label{fig:CM4Circuit}
 \end{figure}
 
@@ -307,7 +307,7 @@ This, along with the FFC used for one of the four USB ports, allows a screen to 
 \begin{figure}[t!]
   \centering
   \includegraphics[width=.75\textwidth,page=3]{Figures/kicad/lathrum_thesis_schematic.pdf}
-  \caption[USB Schematic]{Schematic layout for interfacing with the Compute Module 4. Expanded in Appendix \ref{app:pcb_schematic_cm4}}
+  \caption[CM4 Schematic]{Schematic layout for interfacing with the Compute Module 4. Expanded in Appendix \ref{app:pcb_schematic_cm4}}
   \label{fig:pcb_schematic_cm4}
 \end{figure}
 
@@ -334,8 +334,6 @@ See Appendices \ref{AppendixA} and \ref{AppendixB} for further information.
   \caption[PCB Stencil]{The PCB's stencil. Areas colored black are where solder paste is applied to solder SMD parts to the board}
   \label{fig:PCBStencil}
 \end{figure}
-
-\todo[inline]{Insert pictures of PCB. Thinking at least one showing the flaws of the first board, another of the completed board}
 
 Once the board's design has been completed and checked against all electrical, functional, and manufacturing constraints, the Printed Circuit Board can be produced.
 The first step in fabrication is to print the actual PCB.
@@ -412,4 +410,6 @@ Once the boards were delivered, the revised board was again sent to be professio
 Once the third board was assembled, the board could be tested in full.
 While each part of the board was at least partially functional, there were still issues preventing it from working completely.
 In particular, USB devices plugged into any of the ports on the board were able to receive power from the board but were unable to transfer data in either direction.
-\todo[inline]{I am currently going through and diagnosing this issue}
+Thankfully, this did not prevent testing of the board from being completed, but it did stop the board from being considered a final complete product.
+This board could still be used for testing by connecting peripherals such as the keyboard and mouse through bluetooth and powering the screen through USB.
+Figure \ref{fig:AssembledPCB} shows the final assembled board, with the final PCB layouts in Figures \ref{app:pcb_layout_front} and \ref{app:pcb_layout_back}.

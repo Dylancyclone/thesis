@@ -1,6 +1,6 @@
-\chapter{State of the Art} % Main chapter title
+\chapter{State of the Art}
 
-\label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\label{Chapter3}
 
 This chapter seeks to provide a summary of existing solutions for remote computer access.
 It will not cover specific applications, but rather the protocols that are used to communicate with a remote computer.
@@ -42,7 +42,7 @@ It is not recommended to use VNC over the internet without some secondary form o
 
 \subsection{Chrome Remote Desktop}\label{subsec:ChromeRemoteDesktop}
 
-Google Chromoting\todoquestion{Should this chapter be called Chromoting? "Chrome Remote Desktop" is the much more recognizable name though}, implemented publicly as Chrome Remote Desktop, is an open source protocol that enables remote desktop control through any web browser running on the Chromium engine \cite{chromotingBuildInstructions}.
+Google Chromoting, implemented publicly as Chrome Remote Desktop, is an open source protocol that enables remote desktop control through any web browser running on the Chromium engine \cite{chromotingBuildInstructions}.
 It prioritizes low bandwidth usage and ease of access, allowing easy server install on every major desktop operating system, and enables any web browser or mobile device to act as a client.
 By employing the VP8 compression format (Most commonly seen in internet video streaming), Chromoting is able to keep network traffic low by only sending a few full images of the server's screen as keyframes and transmitting motion with compressed partial frames \cite{miniorange_chromoting}.
 These partial frames are calculated by the server using the difference between the previous and current frame, allowing the server to only send the difference between the two frames.
