@@ -2,6 +2,8 @@
 
 \label{Chapter6}
 
+\todoadvisor{How many samples were taken to create the figures? How many times was the test run?}
+
 In order to evaluate the performance of the forked version of Moonlight developed for this paper, it must be tested against the other existing solutions.
 The testing methodology employed to ensure the accuracy of the testing is described in Section \ref{sec:TestingMethodology}.
 Then, the different results are evaluated and analyzed in Sections \ref{sec:ResponsivityAndLatency} and \ref{sec:Quality}.
@@ -37,9 +39,9 @@ For each test, the following steps are performed:
         This benchmark will run for longer than the duration of the test, and will keep the CPU or GPU at 100\% load for the entire duration of the benchmark.
   \item Both devices start up their respective data collection tool that will record key-strokes and changes in the screen's color.
   \item The client machine connects to the host computer using the application being tested.
-  \item The user presses the \enquote{0} key on the client's numpad to synchronize the two devices' data recording tools.
-  \item The user begins by typing on the client's keyboard slowly, allowing both computers to record their data.
-  \item The user then types on the client's keyboard quickly to ensure that quick successive inputs are handled correctly and no data is lost or duplicated.
+  \item The user presses the \enquote{0} key on the client's numpad to synchronize \todoadvisor{Syncronize what?}the two devices' data recording tools.\todoadvisor{How far off are they?}
+  \item The user begins by typing on the client's keyboard \todoadvisor{what does slowly mean?}slowly, allowing both computers to record their data.
+  \item The user then types on the client's keyboard quickly to ensure that \todoadvisor{Why is there a seperation here?}quick successive inputs are handled correctly and no data is lost or duplicated.
   \item Once typing is complete, both the client and the host computers close their data recording tools and the client ends the streaming session.
 \end{enumerate}
 
@@ -248,6 +250,7 @@ Figure \ref{fig:ColorDelay} shows the amount of time for each application under 
   \caption[Color Delay Data]{Time for client to render update to the screen.}
   \label{fig:ColorDelay}
 \end{figure}
+\todoadvisor{Maybe put full figure in the appendix?}
 
 This data demonstrates a similar but more extreme pattern to the input delay figure, with most application performing well under ideal conditions but struggling a little under high stress.
 The forked Moonlight implementation is able to render updates on the client device in under 70ms in nearly all cases, with an even spread regardless of the load of the host machine.
@@ -330,6 +333,7 @@ This is still in line with it's intended use of basic remote control, though it 
 \section{Quality}\label{sec:Quality}
 
 Apart from the performance of each application, the quality of the user experience must also be taken into account when considering each application.
+Each application will be assessed individually, and then compared in Section \ref{sec:EvaluationSummary}
 When analyzing the forked version of Moonlight, specific quantitative data described in Section \ref{sec:DevelopingTestingAndMeasurementTools} can be collected directly from the application while it is running.
 Once the streaming session concludes, the statistics are collated into human-readable numbers and presented in the console.
 What follows is an example output from one of the test streaming sessions:
@@ -397,7 +401,7 @@ As seen in Figure \ref{fig:crdDelay}, the delay of image rendering climbs as the
 It is unclear on how much of the delay is due to the host machine versus the client machine, as the delay obviously rises as the host's CPU is put under stress, but it is clear that as the host machine is under heavy load the frames can take entire seconds to be rendered on the client machine.
 Figure \ref{fig:crdQuality} shows the quality setting of the VP8 compression algorithm being adjusted over time to keep up with demand.
 This is a decent indication of the quality of the video stream over time, as the quality drops in an attempt to keep the stream updating the client with as much frequency as possible instead of sending full frames.
-With the knowledge that CRD leverages the VP8 compression algorithm \cite{miniorange_chromoting}, it is possible to infer than as the quality goes down, the frames being sent contain less information about the current frame and instead more temporal data to construct the new frame from the previous frame.
+With the knowledge that CRD leverages the VP8 compression algorithm \cite{miniorange_chromoting}, it is possible to infer that as the quality goes down, the frames being sent contain less information about the current frame and instead more temporal data to construct the new frame from the previous frame.
 This is also seen with visual smudging on the client's screen as the stream slows down.
 
 Microsoft's Remote Desktop Protocol does not provide quantitative data to analyze it's quality, but speaking from a user experience perspective, and considering the data provided in the previous section, RDP performed very well under each of the testing conditions.
@@ -414,9 +418,9 @@ The testing done for this paper really stretches the limits of the protocol and 
 
 By combining the information from the previous two sections, a wholistic picture of the performance of each application can be drawn. Firstly, Virtual Network Computing works as a bare-bones method of connecting to a host machine from a client device in the simplest way possible, but struggles at keeping up with even mildly demanding tasks.
 As seen in Figure \ref{fig:ColorDelayLoss}, VNC failed to provide a smooth experience for the user even in ideal conditions by simply not rendering updates to the screen in time for the next frame to be shown.
-This, combined with a slow response time and delayed inputs, causes a poor experience for the user when attempting to use demanding applications or anything that requires speed.
+This, combined with a slow response time and delayed inputs, causes a poor experience for the user when attempting to use demanding applications or anything that requires speed, making it unsuitable for the purposes of this paper.
 
-Secondly, Chrome Remote Desktop performs well under idea conditions and even succeeds at at maintaining steady performance under some GPU load, but it struggles to keep up whenever the host's CPU is under stress.
+Secondly, Chrome Remote Desktop performs well under ideal conditions and even succeeds at at maintaining steady performance under some GPU load, but it struggles to keep up whenever the host's CPU is under stress.
 Due to CRD's reliance on web technologies, it too suffers from the same limitations as seen in other web streaming applications such as visual smearing and dependence on the CPU.
 In fact, these issues are something technology companies like Google have been trying so solve, with the release of their new VP9 codec used for YouTube starting in 2014, but such technology has not yet been introduced to CRD \cite{google_io_vp9}.
 Unfortunately, due to the dependence on the CPU, and difficulty in handling conditions where the host computer is running strenuous tasks, Chrome Remote Desktop is not a suitable software solution for the purposes of this paper.
@@ -428,5 +432,5 @@ If it weren't for the limitations brought up in Section \ref{subsec:RemoteDeskto
 However, because of these drawbacks, RDP is not suitable for every application.
 
 Finally, Moonlight proves to be a high-performant solution that isn't limited by the host's CPU or GPU being under stress.
-Each test resulted in highly similar results, and while it does on average have slightly higher response times compared to RDP (Figures \ref{fig:InputDelay} and \ref{fig:ColorDelay}), it only falls behind by 5-10ms -- \todoquestion{is this appropriate?}quicker than the blink of an eye.
+Each test resulted in highly similar results, and while it does on average have slightly higher response times compared to RDP (Figures \ref{fig:InputDelay} and \ref{fig:ColorDelay}), it only falls behind by 5-10ms -- quicker than the blink of an eye.
 By not dropping any frames, and numerically proving it's ability to keep the stream above 60 frames per second, Moonlight proves to be a great solution for streaming demanding applications to a remote client without compromising its usability.

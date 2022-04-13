@@ -6,6 +6,7 @@ The second half of the project is composed of software that is used to connect t
 Designing the software begins with identifying it's requirements in Section \ref{sec:SoftwareRequirements}.
 Then, potential avenues for development are discussed in Section \ref{sec:PotentialAvenues} so that the software does not need to be built from scratch.
 Following that, special considerations must be made while developing the software for the CM4 running on an \emph{ARM} processor in Section \ref{sec:DevelopingForARM}, and the development of the suite of tools used to record data is detailed in Section \ref{sec:DevelopingTestingAndMeasurementTools}.
+\todo{Link git repo}
 
 
 \section{Requirements}\label{sec:SoftwareRequirements}
@@ -37,7 +38,7 @@ Unfortunately, the Nvidia GameStream protocol is both proprietary and a closed s
 Very little is officially known about the protocol, other than it uses specific video encoders built into Nvidia Graphics cards from the 600 series from 2012 and newer \cite{gamestream_userguide}.
 Apart from that, everything has been researched and reverse engineered by the community.
 A GameStream session is started by first connecting to a host computer which has enabled the GameStream service through Nvidia's GeForce Experience application.
-Once the service is enabled, the computer will listen on port \emph{47989}\todoquestion{Should this be italicized? quoted? plaintext?} for the following web requests:
+Once the service is enabled, the computer will listen on port \emph{47989} for the following web requests:
 \begin{itemize}
   \item /serverinfo
   \item /pair
@@ -78,6 +79,7 @@ This is where the community project Moonlight steps in.
 
 \subsection{Moonlight}\label{subsec:Moonlight}
 
+\todoadvisor{Mention this earlier, maybe to the state of the art}
 Moonlight is an unofficial third-party open-source client for the Nvidia GameStream protocol \cite{moonlight}.
 The project is structured as a core library written in \emph{C} with a number of community built clients built on top of it for various platforms.
 In essence, it turns the process described in the previous section (\ref{subsec:NVIDIAGameStream}) into a usable programming interface.
@@ -99,9 +101,9 @@ Thankfully, setting up a cross-compilation environment for projects written in \
 What isn't as straightforward however, is building a toolchain to compile the rest of the code for \emph{ARM}.
 
 In order to create an out-of-the-box experience for someone using the hardware for this project, a custom operating system image is created that has all the dependencies, libraries, and applications pre-installed and pre-configured.
-Manjaro provides good tools for building and managing custom images of the Manjaro operating system for \emph{ARM} architectures \cite{manjaro_arm_tools}, with the only drawback being that it is that it must be run on an \emph{ARM} processor, and is much more difficult to run on another architecture.
+Manjaro provides good tools for building and managing custom images of the Manjaro operating system for \emph{ARM} architectures \cite{manjaro_arm_tools}, with the only drawback being that it must be run on an \emph{ARM} processor, and is much more difficult to run on another architecture.
 To make development easier, a toolchain was built that could be run on the CM4 to build the code that is written on other computers.
-All the developer needs to do is to pull the git repository of the project, run a set up script to install dependencies, and then run the build script to compile everything into an immediately deployable OS image.
+All the developer needs to do is to pull the git repository\todoadvisor{Cite the git repository} of this project onto the \emph{ARM} architecture, run a set up script to install dependencies, and then run the build script to compile everything into an immediately deployable OS image.
 This build script will automatically compile all the necessary code using \emph{cmake}, package all the necessary files using \emph{makepkg}, and build a fresh OS image that is ready to flash.
 The following excerpt details the three functions used to make this work.
 
@@ -110,7 +112,7 @@ runMake()
 {
   mkdir ./moonlight/build # Create build directory
   cd ./moonlight/build # Go to build directory
-  cmake ../ # Run cmake
+  cmake ../ # Run cmake on the project directory
   make # Build the project
   sudo make install # Install the project
   sudo ldconfig /usr/local/lib # Link libraries
@@ -151,6 +153,7 @@ Finally, the image is moved to the project's build folder where it is ready to b
 
 \section{Developing Testing and Measurement Tools}\label{sec:DevelopingTestingAndMeasurementTools}
 
+\todoadvisor{Explicitly mention that this is work I did}
 In order to evaluate the performance of the project, a suite of tools must be developed to test both the newly developed application and the existing solutions.
 To do this, two sets of data will be collected: First, data is recorded directly from the forked version of moonlight that logs statistics such as the number of frames received, dropped, or rendered, and data that is recorded from a separate application that logs the amount of time it takes for the client machine to receive updates after it sends data to the host machine.
 The first set of data is important to track the raw performance of the application, with statistics like Frames Per Second (FPS) and decoding time which are difficult to record otherwise.
@@ -178,6 +181,7 @@ typedef struct _VIDEO_STATS {
 
 The second set of data is recorded by measuring the total amount of time it takes for the host to receive data from the client, and for the client to receive updates back from the host.
 This is done using the following steps once the client is connected to the host:
+\todoadvisor{Mention that the times need to be syncronized}
 
 \begin{enumerate}
   \item When a user hits a key on the client, record which key was pressed and at what timestamp.
@@ -212,4 +216,7 @@ It's source in it's entirety follows:
 \end{lstlisting}
 
 This is sufficient to change the color of the screen back and forth between easily distinguishable colors for both the client and the host to record.
+\todoadvisor{Mention that this is recorded by the dataloggerz}
 With both of these datasets recorded, the next step is to analyze the data and evaluate the performance of the application.
+
+\todoadvisor{Summary}

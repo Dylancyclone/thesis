@@ -9,6 +9,8 @@ Then, the feasibility of prototyping such as system is discussed in Section \ref
 \section{Requirements}\label{sec:HardwareRequirements}
 
 This section will explain the different constraints taken into account while developing the hardware portion of this project.
+\todoadvisor{Target user or audience of the product should be described more accurately. Since no studies or research has been conducted regarding which group of people are interested in / will use this product, no specific requirements can be derived for the system.
+At this point the only source of the requirements is the author of the thesis and hence it should be worded this way. The thesis should initially state that the requirements for the user experience are based on the authors requirements/preferences, to make clear that no other users were involved or a study conducted with other persons.}
 First, the hardware must be performant enough to provide a positive user experience (\ref{subsec:HardwarePerformance}), and secondly the product must be cheap enough to justify it over similar alternatives (\ref{subsec:HardwareCost}).
 
 \subsection{Performance}\label{subsec:HardwarePerformance}
@@ -322,7 +324,7 @@ Also note the blank area surrounded by vias at the top of Figure \ref{fig:CM4Cir
 This is where the WiFi and Bluetooth antennas are located on the CM4 board.
 By removing the copper pour from this area on the PCB board and stitching the perimeter with vias, it prevents the board from acting like another antenna and interfering with the signals being sent to and from the CM4.
 Finally, each of the other components are connected to the CM4 board in the same manner as described throughout this chapter, such as the Ethernet adapter, the SD card reader, and remaining ports.
-\todoadvisor{Why are those components not described in the same way as power/USB/etc.?}\todoquestion{The Ethernet port is hooked directly into the CM4 connector with nothing interested except that they are also differential pairs, as described in the HDMI section. I suppose they could be explained fully, but I worry that it wouldn't add any useful information.}
+\todoadvisor{Why are those components not described in the same way as power/USB/etc.?}\todoquestion{The Ethernet port is hooked directly into the CM4 connector with nothing interested except that they are also differential pairs, as described in the HDMI section. I suppose they could be explained fully, but I worry that it wouldn't add any useful information.}\todoadvisor{Explain why it's skimed over}
 See Appendices \ref{AppendixA} and \ref{AppendixB} for further information.
 
 
@@ -390,7 +392,7 @@ After delivering the board, stencil, and parts, the second board was assembled.
 
 The second board was assembled mostly successfully, and allowed the first stage of testing to begin.
 The only issue apart from some ports being too close together with real-world cables was one component having the wrong footprint on the board.
-Unfortunately, the component \emph{U2 (MCP73871-2CCI\_ML)}, is described as using the \emph{QFN-20-1EP\_4x4mm} footprint in it's datasheet\todoquestion{Does this need to be cited? Can you cite a datasheet like this?}, but actually uses a revised version of the footprint, shown in Figure \ref{fig:FootprintQFN204x4}.
+Unfortunately, the component \emph{U2 (MCP73871-2CCI\_ML)}, is described as using the \emph{QFN-20-1EP\_4x4mm} footprint in its datasheet\todoquestion{Does this need to be cited? Can you cite a datasheet like this?}\todoadvisor{Yes}, but actually uses a revised version of the footprint, shown in Figure \ref{fig:FootprintQFN204x4}.
 This discrepancy meant that that component could not be soldered, and it's associated circuit would not function properly.
 In this case, the component was a part of the battery charging circuit, causing the entire primary power supply to be unusable.
 Thankfully, as described in Section \ref{sec:Prototyping}, the secondary method of powering the board could be used to test the remaining features of the board.
