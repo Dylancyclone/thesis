@@ -2,8 +2,6 @@
 
 \label{Chapter6}
 
-\todoadvisor{How many samples were taken to create the figures? How many times was the test run?}
-
 In order to evaluate the performance of the forked version of Moonlight developed for this paper, it must be tested against the other existing solutions.
 The testing methodology employed to ensure the accuracy of the testing is described in Section \ref{sec:TestingMethodology}.
 Then, the different results are evaluated and analyzed in Sections \ref{sec:ResponsivityAndLatency} and \ref{sec:Quality}.
@@ -39,9 +37,11 @@ For each test, the following steps are performed:
         This benchmark will run for longer than the duration of the test, and will keep the CPU or GPU at 100\% load for the entire duration of the benchmark.
   \item Both devices start up their respective data collection tool that will record key-strokes and changes in the screen's color.
   \item The client machine connects to the host computer using the application being tested.
-  \item The user presses the \enquote{0} key on the client's numpad to synchronize \todoadvisor{Syncronize what?}the two devices' data recording tools.\todoadvisor{How far off are they?}
-  \item The user begins by typing on the client's keyboard \todoadvisor{what does slowly mean?}slowly, allowing both computers to record their data.
-  \item The user then types on the client's keyboard quickly to ensure that \todoadvisor{Why is there a seperation here?}quick successive inputs are handled correctly and no data is lost or duplicated.
+  \item The tester presses the \enquote{0} key on the client's numpad to synchronize the two devices' clocks and data recording tools (Detailed below).
+  \item The tester begins by typing on the client's keyboard at a steady pace as close to 50 words per minute as possible, allowing both computers to record their data.
+  \item The tester then types on the client's keyboard at a quicker pace of approximately 100 words per minute to ensure that quick successive inputs are handled correctly and no data is lost or duplicated.
+  Due to the wide variance in what the user can do using the software, it is nearly impossible to test real world scenarios.
+  Instead, high frequency inputs coupled with updating the entire screen mimic high-intensity applications.
   \item Once typing is complete, both the client and the host computers close their data recording tools and the client ends the streaming session.
 \end{enumerate}
 
@@ -59,6 +59,10 @@ This process is repeated for each of the following applications:
 Once all the data is collected, the data from the host and client machines for a single trial are organized into a single CSV file for processing.
 In order to ensure that the data is comparable, all extraneous factors must be removed from the data.
 Namely, the network latency and difference in computer clocks must be removed.
+By keeping the host and client computers attached to the same network through ethernet, the network latency is minimized.
+But the task of keeping two computer's internal clocks synchronized is not trivial.
+Even after instructing the operating system to synchronize its clock with an internet time server, the two computers may still report different times.
+In some cases, the difference between the host and client computer's system time was noticed to be upwards of a full second after resynchronizing both clocks \cite{time.is}.
 This is partially accounted for in step \emph{6} of the above process, and the remaining inaccuracy can now be removed by subtracting the time difference between the when the client presses the button and the time the host executes that command.
 This ensures that any inaccuracies in each computer's internal clock will not impact the data.
 
@@ -74,6 +78,9 @@ This is important for general user experience and applications where continuous 
 This is also what is generally referred to when determining whether an application has a positive user experience, since a program that can take seconds to respond to the user begets lower productivity and a more frustrating experience.
 To analyze this, two points of data are recorded: First, the amount of time between when the client records a keystroke and when it is actually inputted on the host machine, and secondly, the amount of time between the host machine updating their screen and when the client actually displays that update.
 The first datum is generally referred to as the latency of the application, since even though each trial is done using the same network setup different programs may have different optimizations built in that reduce the time needed for the host to implement keystrokes made by the client.
+Each of the following figures shows data over one trial for each category.
+Each trial lasted approximately 60 seconds following the steps detailed in Section \ref{sec:TestingMethodology}, totaling to approximately 200 keystrokes per trial.
+Limitations in this data is discussed in Section \ref{sec:ConclusionLimitations}.
 Figure \ref{fig:InputDelay} shows the amount of time between the client and the host registering the keystroke under the different test conditions.
 
 \begin{figure}[h]
@@ -250,7 +257,6 @@ Figure \ref{fig:ColorDelay} shows the amount of time for each application under 
   \caption[Color Delay Data]{Time for client to render update to the screen.}
   \label{fig:ColorDelay}
 \end{figure}
-\todoadvisor{Maybe put full figure in the appendix?}
 
 This data demonstrates a similar but more extreme pattern to the input delay figure, with most application performing well under ideal conditions but struggling a little under high stress.
 The forked Moonlight implementation is able to render updates on the client device in under 70ms in nearly all cases, with an even spread regardless of the load of the host machine.

@@ -6,12 +6,15 @@ There are a lot of factors that go into designing and building an electrical sys
 This process begins by outlining the requirements in Section \ref{sec:HardwareRequirements}, followed by describing the process and methodology of choosing parts in Section \ref{sec:ChoosingParts}.
 Then, the feasibility of prototyping such as system is discussed in Section \ref{sec:Prototyping}, and finally the system is designed and manufactured in Sections \ref{sec:DesigningThePCB} and \ref{sec:ManufacturingThePCB} respectively.
 
+The entirety of the hardware schematics and designs developed for this project are available on GitHub at: \url{https://github.com/Dylancyclone/thesis/kicad}.
+
 \section{Requirements}\label{sec:HardwareRequirements}
 
 This section will explain the different constraints taken into account while developing the hardware portion of this project.
-\todoadvisor{Target user or audience of the product should be described more accurately. Since no studies or research has been conducted regarding which group of people are interested in / will use this product, no specific requirements can be derived for the system.
-At this point the only source of the requirements is the author of the thesis and hence it should be worded this way. The thesis should initially state that the requirements for the user experience are based on the authors requirements/preferences, to make clear that no other users were involved or a study conducted with other persons.}
 First, the hardware must be performant enough to provide a positive user experience (\ref{subsec:HardwarePerformance}), and secondly the product must be cheap enough to justify it over similar alternatives (\ref{subsec:HardwareCost}).
+
+Due to the lack of preliminary studies or research into the topic of target audience for this project, the requirements laid out in this section are based on the author's own requirements and preferences.
+The requirements are constructed with the target user being someone who already has a working desktop computer and wishes to leverage it's power remotely without sacrificing the user experience.
 
 \subsection{Performance}\label{subsec:HardwarePerformance}
 
@@ -156,7 +159,7 @@ Not to mention the difficulty in wiring up that many pins along with the other r
 
 Instead, the first board was built out in a piecewise fashion, allowing each section of the board a way to fail without interrupting the rest of the board.
 This allows each function of the board to be tested individually and in isolation so that changes could be made incrementally without needing to worry about their integration with the rest of the board.
-\todoquestion{This is that tricky sentence}For example, in order to build a system that would allow the board to be powered via USB or an internal battery, as well as charge the battery simultaneously, a complex circuit would have to be built that managed Lithium Polymer (LiPo) batteries which could cause fires if mishandled.
+For example, in order to build a system that would allow the board to be powered via USB or an internal battery, as well as charge the battery simultaneously, a complex circuit would have to be built that managed Lithium Polymer (LiPo) batteries which could cause fires if mishandled.
 Since power is obviously a critical component of the board, A secondary way of feeding power directly the board was built to bypass all that circuitry in case it fails.
 In doing so, the board can still be powered and it's other features can be tested while a fix for that portion of the circuitry is developed for the next iteration.
 
@@ -324,7 +327,8 @@ Also note the blank area surrounded by vias at the top of Figure \ref{fig:CM4Cir
 This is where the WiFi and Bluetooth antennas are located on the CM4 board.
 By removing the copper pour from this area on the PCB board and stitching the perimeter with vias, it prevents the board from acting like another antenna and interfering with the signals being sent to and from the CM4.
 Finally, each of the other components are connected to the CM4 board in the same manner as described throughout this chapter, such as the Ethernet adapter, the SD card reader, and remaining ports.
-\todoadvisor{Why are those components not described in the same way as power/USB/etc.?}\todoquestion{The Ethernet port is hooked directly into the CM4 connector with nothing interested except that they are also differential pairs, as described in the HDMI section. I suppose they could be explained fully, but I worry that it wouldn't add any useful information.}\todoadvisor{Explain why it's skimed over}
+These ports are connected by simply connecting the appropriate pin on the CM4's mezzanine connector to the corresponding pin on the component.
+Apart from the concerns brought up by keeping the differential pairs in line and the power carefully managed as with the previous components described in detail, there are no special considerations that need to be made while designing the layout for these components.
 See Appendices \ref{AppendixA} and \ref{AppendixB} for further information.
 
 
@@ -392,7 +396,7 @@ After delivering the board, stencil, and parts, the second board was assembled.
 
 The second board was assembled mostly successfully, and allowed the first stage of testing to begin.
 The only issue apart from some ports being too close together with real-world cables was one component having the wrong footprint on the board.
-Unfortunately, the component \emph{U2 (MCP73871-2CCI\_ML)}, is described as using the \emph{QFN-20-1EP\_4x4mm} footprint in its datasheet\todoquestion{Does this need to be cited? Can you cite a datasheet like this?}\todoadvisor{Yes}, but actually uses a revised version of the footprint, shown in Figure \ref{fig:FootprintQFN204x4}.
+Unfortunately, the component \emph{U2 (MCP73871-2CCI\_ML)}, is described as using the \emph{QFN-20-1EP\_4x4mm} footprint in its datasheet \cite{MCP73871-2CCI/ML-ND_datasheet}, but actually uses a revised version of the footprint, shown in Figure \ref{fig:FootprintQFN204x4}.
 This discrepancy meant that that component could not be soldered, and it's associated circuit would not function properly.
 In this case, the component was a part of the battery charging circuit, causing the entire primary power supply to be unusable.
 Thankfully, as described in Section \ref{sec:Prototyping}, the secondary method of powering the board could be used to test the remaining features of the board.
