@@ -1,0 +1,76 @@
+\chapter{Conclusion}
+
+\label{Chapter7}
+
+
+\section{Summary}\label{sec:ConclusionSummary}
+
+This thesis has proved that it is possible to produce a hardware and software solution that is capable of leveraging the power of a desktop computer remotely without sacrificing the user's experience.
+It improves upon existing solutions by continuing to offer a performant and high-quality stream of the host's screen and audio to the user even as the host is running highly demanding applications.
+Each of the questions posed in Section \ref{sec:ResearchQuestions} can be answered individually.
+
+\begin{enumerate}
+  \setcounter{enumi}{0} % Start the enumeration at X+1
+  \item \textbf{Hardware Feasibility:} \emph{What hardware is needed in order to power a mobile device capable of acting as a client?}
+\end{enumerate}
+
+\noindent
+This thesis project is able to run on embedded Single Board Computers and hardware available for purchase today.
+While this project built a custom PCB for the Raspberry Pi Compute Module 4 (Discussed in section \ref{sec:ChoosingParts}), the software could also run on consumer-grade Raspberry Pi models as well.
+
+\begin{enumerate}
+  \setcounter{enumi}{1} % Start the enumeration at X+1
+  \item \textbf{Hardware Cost:} \emph{Is it feasible to construct such as device at a lower or comparable cost to existing solutions?}
+\end{enumerate}
+
+\noindent
+Yes, the total cost for a single hardware unit, including the board and all its components, totalled in under \$150, and could even be produced for less (Discussed in Section \ref{subsec:HardwareCost}).
+This cost is considerably cheaper than buying a new laptop device, and often cheaper than buying a used laptop with comparable power.
+
+\begin{enumerate}
+  \setcounter{enumi}{2} % Start the enumeration at X+1
+  \item \textbf{Communication Protocol:} \emph{Does a protocol exist that is efficient enough to stream demanding applications to a client?}
+\end{enumerate}
+
+\noindent
+Yes, Nvidia's GameStream protocol proved itself to be capable of streaming highly demanding applications to a client device without any loss of quality or performance (Discussed in Section \ref{sec:EvaluationSummary}).
+Even though it's original purpose and namesake is to stream video games, the high demands of such a use case have made it applicable to much more than just that.
+While Microsoft's Remote Desktop Protocol proved to be powerful enough to stream demanding applications to a client device, it's limitations and closed-source nature prevent it from being the viable solution for certain use cases (Discussed in \ref{subsec:RemoteDesktopProtocol}).
+
+\begin{enumerate}
+  \setcounter{enumi}{3} % Start the enumeration at X+1
+  \item \textbf{Software Application:} \emph{Can a software solution be built to utilize this protocol in a manner that performant enough?}
+\end{enumerate}
+
+\noindent
+Yes, the solution produced in this thesis is built upon the open source project Moonlight, which utilizes the GameStream protocol, to provide a software application that is capable of streaming demanding applications to a client device while remaining performant enough to provide a positive user experience (Discussed in Section \ref{sec:EvaluationSummary}).
+
+
+\section{Limitations}\label{sec:ConclusionLimitations}
+
+While this thesis was constructed with the utmost attentiveness with regards to the time and resources available, there are still limitations in what could be accomplished.
+The largest limitation is the lack of testing in alternative environments.
+All of the testing performed in Chapter \ref{Chapter6} was performed in an ideal network environment, where there was minimal network latency between the host and client machines due to them both being connected to the same network by ethernet.
+While this is a good indicator of the best possible performance, it is not very indicative of the performance that could be expected in a real-world environment.
+More testing should be done where the host and client machines are located on different networks akin to the use case described in Section \ref{sec:ApplicationToModernDay}.
+
+Secondly, due to the ongoing chip shortage and the lack of experience in developing PCB boards, it is very likely that there are better ways to develop the PCB board for this project.
+While the board was able to meet the requirements for this project, there we're many instances (some described in table \ref{tab:SelectedComponents}) where alternative parts had to be chosen and designed around because the first-choice was out of stock.
+It is very possible that the board could have been constructed quicker and at a cheaper price if more parts were available for purchase.
+
+
+\section{Future Research}\label{sec:ConclusionFutureResearch}
+
+Should this project be continued in the future, there are multiple ways that additional time and resources could further improve this project.
+The first improvement to make is to fix the issue with USB data described in section \ref{subsec:Manufacturing3}.
+This is the only flaw in the hardware preventing it from being considered a completed product.
+Similar to the previous section, if more time were available, more testing could be done in various environments to identify any weaknesses in the software that may have gone unnoticed.
+
+Another aspect of the project worth testing in more detail is the performance of the hardware produced in Chapter \ref{Chapter4} compared to the hardware performance of the development board that is sold with the CM4 (Section \ref{sec:ChoosingParts}).
+The ideal outcome is that the two boards provide the same performance, meaning that there is no unneeded overhead introduced by the board produced in this thesis that should be fixed.
+In the event that there is slowdown somewhere within the custom board, the specific problem should be identified and redesigned to provide optimal performance.
+
+After experimenting with streaming over different networks and testing the project under different conditions, it would be beneficial to look at polishing the hardware of the project into a self-contained product.
+As it stands, it is currently a PCB with peripherals attached that make it cumbersome to carry around.
+The groundwork for this has already been laid out in Section \ref{subsec:DesigningHDMI}, with FFC connectors established for one HDMI and one USB port for connection to an embedded screen, and with the footprint of the final PCB and battery fitting within the footprint of the chosen screen.
+All that is left is to build an enclosure to house the final product.

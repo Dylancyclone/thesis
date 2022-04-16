@@ -1,0 +1,24 @@
+{
+  "editor.fontFamily": "Verdana",
+	"editor.wordWrap": "on",
+  "editor.wrappingIndent": "same",
+  "latex-workshop.view.pdf.invert": 0,
+  "cSpell.words": [
+    "Chromoting",
+    "componentization",
+    "datasheet",
+    "datasheets",
+    "Digi",
+    "JLCPCB",
+    "keyframes",
+    "numpad",
+    "pinout",
+    "reengineered",
+    "reengineering",
+    "repairability",
+    "Responsivity",
+    "revisioning",
+    "unauthorizing",
+    "unpairs"
+  ]
+}
