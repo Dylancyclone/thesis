@@ -65,7 +65,12 @@ Should this project be continued in the future, there are multiple ways that add
 The first improvement to make is to fix the issue with USB data described in section \ref{subsec:Manufacturing3}.
 This is the only flaw in the hardware preventing it from being considered a completed product.
 Similar to the previous section, if more time were available, more testing could be done in various environments to identify any weaknesses in the software that may have gone unnoticed.
-After experimenting with streaming over different networks, it would be beneficial to look at polishing the hardware of the project into a self-contained product.
+
+Another aspect of the project worth testing in more detail is the performance of the hardware produced in Chapter \ref{Chapter4} compared to the hardware performance of the development board that is sold with the CM4 (Section \ref{sec:ChoosingParts}).
+The ideal outcome is that the two boards provide the same performance, meaning that there is no unneeded overhead introduced by the board produced in this thesis that should be fixed.
+In the event that there is slowdown somewhere within the custom board, the specific problem should be identified and redesigned to provide optimal performance.
+
+After experimenting with streaming over different networks and testing the project under different conditions, it would be beneficial to look at polishing the hardware of the project into a self-contained product.
 As it stands, it is currently a PCB with peripherals attached that make it cumbersome to carry around.
 The groundwork for this has already been laid out in Section \ref{subsec:DesigningHDMI}, with FFC connectors established for one HDMI and one USB port for connection to an embedded screen, and with the footprint of the final PCB and battery fitting within the footprint of the chosen screen.
 All that is left is to build an enclosure to house the final product.
