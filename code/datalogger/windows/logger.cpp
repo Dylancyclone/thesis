@@ -18,7 +18,7 @@ Adapted from GiacomoLaw/Keylogger
 const std::map<int, std::string> keyname{
 		{VK_BACK, "[BACKSPACE]"},
 		{VK_RETURN, "[RETURN]"},
-		{VK_SPACE, " "}, // Space
+		{VK_SPACE, "space"},
 		{VK_TAB, "[TAB]"},
 		{VK_SHIFT, "[SHIFT]"},
 		{VK_LSHIFT, "[LEFT_SHIFT]"},
@@ -38,11 +38,11 @@ const std::map<int, std::string> keyname{
 		{VK_DOWN, "[DOWN]"},
 		{VK_PRIOR, "[PG_UP]"},
 		{VK_NEXT, "[PG_DOWN]"},
-		{VK_OEM_PERIOD, "."},
-		{VK_DECIMAL, "."},
-		{VK_OEM_PLUS, "+"},
+		{VK_OEM_PERIOD, "period"},
+		{VK_DECIMAL, "period"},
+		{VK_OEM_PLUS, "equal"},
 		{VK_OEM_MINUS, "-"},
-		{VK_ADD, "+"},
+		{VK_ADD, "equal"},
 		{VK_SUBTRACT, "-"},
 		{VK_CAPITAL, "[CAPSLOCK]"},
 };
@@ -103,11 +103,16 @@ int Save(int key_stroke)
 	std::stringstream output;
 	HKL layout = NULL;
 
-	if (key_stroke == VK_RETURN)
+	if (key_stroke == VK_OEM_PLUS)
 	{
-		// If Numpad 0 is hit, reset the counter for easy data comprehension
+		// If plus is hit, reset the counter for easy data comprehension
 		keysInputCounter = 0;
 		colorsInputCounter = 0;
+	}
+	if (key_stroke == VK_OEM_MINUS)
+	{
+		// If minus is hit, exit
+		exit(0);
 	}
 
 	if (keyname.find(key_stroke) != keyname.end())
@@ -155,10 +160,10 @@ void colorThread()
 	double prev_r, prev_g, prev_b = 0;
 	if (_hGDI)
 	{
+		HDC _hdc = GetDC(NULL);
 		while (true)
 		{
 			GETPIXEL pGetPixel = (GETPIXEL)GetProcAddress(_hGDI, "GetPixel");
-			HDC _hdc = GetDC(NULL);
 			if (_hdc)
 			{
 				// get center of screen
@@ -176,7 +181,8 @@ void colorThread()
 				{
 					// get time
 					unsigned long long now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-					output_file_colors << now << ",[Color Change: " << _red << " " << _green << " " << _blue << "]" << "," << colorsInputCounter++ << ",windows" << std::endl;
+					output_file_colors << now << ",[Color Change: " << _red << " " << _green << " " << _blue << "]"
+														 << "," << colorsInputCounter++ << ",windows" << std::endl;
 					output_file_colors.flush();
 					// std::cout << "Color: " << _red << "," << _green << "," << _blue << std::endl;
 					prev_r = _red;
@@ -184,9 +190,9 @@ void colorThread()
 					prev_b = _blue;
 				}
 			}
-			FreeLibrary(_hGDI);
 		}
 	}
+	FreeLibrary(_hGDI);
 }
 
 int main()
@@ -203,7 +209,7 @@ int main()
 	// set the hook
 	SetHook();
 
-	//Start reading color
+	// Start reading color
 	std::thread t1(colorThread);
 
 	// loop to keep the console application running.
