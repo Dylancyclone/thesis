@@ -136,6 +136,16 @@ headsepline, % Uncomment to get a line under the header
 \usepackage{pgfplots} % Required for the plots
 \usepgfplotslibrary{statistics}
 \pgfplotsset{compat=1.8}
+% Fix mod function bug
+% borrowed from <https://tex.stackexchange.com/a/145967/95441>
+\pgfmathdeclarefunction{fpumod}{2}{%
+		\pgfmathfloatdivide{#1}{#2}%
+		\pgfmathfloatint{\pgfmathresult}%
+		\pgfmathfloatmultiply{\pgfmathresult}{#2}%
+		\pgfmathfloatsubtract{#1}{\pgfmathresult}%
+		% replaced `0' by `5' to make it work for this problem
+		\pgfmathfloatifapproxequalrel{\pgfmathresult}{#2}{\def\pgfmathresult{5}}{}%
+}
 
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS

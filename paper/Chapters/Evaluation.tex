@@ -24,6 +24,7 @@ The tests are performed multiple times under the following conditions:
   \item Ideal Conditions: No other applications are running during testing.
   \item CPU Stressed: The CPU is constantly at 100\% load during the entire test.
   \item GPU Stressed: The GPU is constantly at 100\% load during the entire test.
+  \item Both Stressed: Both the CPU and the GPU are constantly at 100\% load during the entire test.
 \end{itemize}
 
 \noindent
@@ -37,12 +38,10 @@ For each test, the following steps are performed:
         This benchmark will run for longer than the duration of the test, and will keep the CPU or GPU at 100\% load for the entire duration of the benchmark.
   \item Both devices start up their respective data collection tool that will record key-strokes and changes in the screen's color.
   \item The client machine connects to the host computer using the application being tested.
-  \item The tester presses the \enquote{0} key on the client's numpad to synchronize the two devices' clocks and data recording tools (Detailed below).
-  \item The tester begins by typing on the client's keyboard at a steady pace as close to 50 words per minute as possible, allowing both computers to record their data.
-  \item The tester then types on the client's keyboard at a quicker pace of approximately 100 words per minute to ensure that quick successive inputs are handled correctly and no data is lost or duplicated.
-  Due to the wide variance in what the user can do using the software, it is nearly impossible to test real world scenarios.
-  Instead, high frequency inputs coupled with updating the entire screen mimic high-intensity applications.
-  \item Once typing is complete, both the client and the host computers close their data recording tools and the client ends the streaming session.
+  \item The tester presses the \enquote{=} to begin the automated testing process.
+        Due to the wide variance in what the user can do using the software, it is nearly impossible to test real world scenarios.
+        Instead, the automated test simulates an active working environment by sending 400 keystrokes with a 500ms delay between inputs coupled with updating the entire screen for each keystroke to mimic high-intensity applications.
+  \item Once the trial is complete, both the client and the host computers close their data recording tools and the client ends the streaming session.
 \end{enumerate}
 
 \noindent
@@ -79,7 +78,7 @@ This is also what is generally referred to when determining whether an applicati
 To analyze this, two points of data are recorded: First, the amount of time between when the client records a keystroke and when it is actually inputted on the host machine, and secondly, the amount of time between the host machine updating their screen and when the client actually displays that update.
 The first datum is generally referred to as the latency of the application, since even though each trial is done using the same network setup different programs may have different optimizations built in that reduce the time needed for the host to implement keystrokes made by the client.
 Each of the following figures shows data over one trial for each category.
-Each trial lasted approximately 60 seconds following the steps detailed in Section \ref{sec:TestingMethodology}, totaling to approximately 200 keystrokes per trial.
+Each trial consists of the client machine programmatically sending 400 keystrokes with 500ms between each input.
 Limitations in this data is discussed in Section \ref{sec:ConclusionLimitations}.
 Figure \ref{fig:InputDelay} shows the amount of time between the client and the host registering the keystroke under the different test conditions.
 
@@ -87,80 +86,88 @@ Figure \ref{fig:InputDelay} shows the amount of time between the client and the 
   \centering
   \begin{tikzpicture}
     \begin{axis}[
-      boxplot/draw direction=y,
-      ylabel={Time (ms)},
-      scale only axis,
-      height=8cm,
-      width=\textwidth,
-      ymin=0,ymax=200,
-      cycle list={{black},{blue},{red}},
-      legend style={
-          legend pos=outer north east,
-          font=\small
-        },
-      legend cell align=left,
-      legend image code/.code={%
-          \draw[#1] (0cm,-0.1cm) rectangle (0.6cm,0.1cm);
-        },
-      boxplot={
-          % Three boxplots for each column
-          draw position={1/4 + floor(\plotnumofactualtype/3) + 1/4*mod(\plotnumofactualtype,3)},
-          % Each plot takes up a quarter of the column
-          box extend=0.2,
-        },
-      % 1 unit in x controls the width:
-      x=2cm,
-      % ... and it means that we should describe intervals:
-      xtick={0,1,2,...,10},
-      x tick label as interval,
-      xticklabels={%
-      {Forked Moonlight\\{\tiny ideal/cpu/gpu}},%
-      {CRD\\{\tiny ideal/cpu/gpu}},%
-      {RDP\\{\tiny ideal/cpu/gpu}},%
-      {VNC\\{\tiny ideal/cpu/gpu}},%
-      },
-      x tick label style={
-          text width=2.5cm,
-          align=center
-        },
+        boxplot/draw direction=y,
+        ylabel={Time (ms)},
+        scale only axis,
+        height=8cm,
+        width=\textwidth,
+        ymin=0,ymax=200,
+        cycle list={{green!70!black},{red},{blue},{black}},
+        legend style={
+            legend pos=outer north east,
+            font=\small
+          },
+        legend cell align=left,
+        legend image code/.code={%
+            \draw[#1] (0cm,-0.1cm) rectangle (0.6cm,0.1cm);
+          },
+        boxplot={
+            % Three boxplots for each column
+            draw position={1/5 + floor(\plotnumofactualtype/4) + 1/5*fpumod(\plotnumofactualtype,4)},
+            % Each plot takes up a 15% of the column
+            box extend=0.15,
+          },
+        % 1 unit in x controls the width:
+        x=2cm,
+        % ... and it means that we should describe intervals:
+        xtick={0,1,2,...,10},
+        x tick label as interval,
+        xticklabels={%
+            {Forked Moonlight},%
+            {CRD},%
+            {RDP},%
+            {VNC},%
+          },
+        x tick label style={
+            text width=2.5cm,
+            align=center
+          },
       ]
 
       % Forked Moonlight
       \addplot
-      table[col sep=comma,x=Time difference] {Data/ideal/moonlight_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/ideal/moonlight_key_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stresscpu/moonlight_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stresscpu/moonlight_key_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stressgpu/moonlight_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stressgpu/moonlight_key_delay.csv};
+      \addplot
+      table[x expr=\coordindex+1, y index=0] {Data/stressboth/moonlight_key_delay.csv};
 
       % CRD
       \addplot
-      table[col sep=comma,x=Time difference] {Data/ideal/crd_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/ideal/crd_key_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stresscpu/crd_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stresscpu/crd_key_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stressgpu/crd_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stressgpu/crd_key_delay.csv};
+      \addplot
+      table[x expr=\coordindex+1, y index=0] {Data/stressboth/crd_key_delay.csv};
 
       % RDP
       \addplot
-      table[col sep=comma,x=Time difference] {Data/ideal/rdp_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/ideal/rdp_key_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stresscpu/rdp_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stresscpu/rdp_key_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stressgpu/rdp_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stressgpu/rdp_key_delay.csv};
+      \addplot
+      table[x expr=\coordindex+1, y index=0] {Data/stressboth/rdp_key_delay.csv};
 
       % VNC
       \addplot
-      table[col sep=comma,x=Time difference] {Data/ideal/vnc_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/ideal/vnc_key_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stresscpu/vnc_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stresscpu/vnc_key_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stressgpu/vnc_key_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stressgpu/vnc_key_delay.csv};
+      \addplot
+      table[x expr=\coordindex+1, y index=0] {Data/stressboth/vnc_key_delay.csv};
 
-      \legend{Ideal,CPU stressed,GPU stressed}
+      \legend{Ideal,CPU stressed,GPU stressed, Both stressed}
     \end{axis}
   \end{tikzpicture}
-  \caption[Input Delay Data]{Time for host to press key from client.}
+  \caption[Input Delay Data]{Time for host to press key from client. n=400.}
   \label{fig:InputDelay}
 \end{figure}
 
@@ -169,101 +176,111 @@ The forked Moonlight implementation keeps a latency under 20ms regardless of the
 CRD proves to be a CPU limited application, with latency while idle or under GPU load also staying below 20ms, but climbing up above 50ms when under CPU load.
 This is important to keep in mind when thinking about what sort of situations the host machine will be in while being accessed.
 If the user is going to be rendering video remotely, a GPU intensive process, the latency of the stream wont be impacted, but if the user is going to be running a CPU intensive process, the latency can be expected to be negatively impacted.
-RDP has a similar story, with extremely low latency while idle or under GPU load, and upwards of 40ms while under CPU load.
+RDP has a similar results, with extremely low latency while idle or under GPU load, and upwards of 40ms while under CPU load.
 VNC has the highest variance, with no discernable affinity to any kind of load.
 This lines up with it's intended use described in Section \ref{subsec:VirtualNetworkComputing}, being the simplest and most straightforward method of remote desktop control without much focus on performance or security.
-That's not so say VNC is unusable or even difficult to use; latency of 160ms is still usable in all but the most precise situations.
+That's not so say VNC is unusable or even difficult to use; latency of 140ms is still usable in all but the most precise situations.
 Though this is only one metric to consider, the other is the amount of time it take for the client to display the results of their input.
 This is recorded as the amount of time it takes between the host machine changing the color of it's screen and the client rendering the change.
+As noted before, the color of the host's screen changes with each input sent by the client, which occurs every 500ms for 400 keystrokes.
 Figure \ref{fig:ColorDelay} shows the amount of time for each application under each condition.
 
 \begin{figure}[h]
   \centering
   \begin{tikzpicture}
     \begin{axis}[
-      boxplot/draw direction=y,
-      ylabel={Time (ms)},
-      scale only axis,
-      height=8cm,
-      width=\textwidth,
-      ymin=0,ymax=250,
-      cycle list={{black},{blue},{red}},
-      legend style={
-          legend pos=outer north east,
-          font=\small
-        },
-      legend cell align=left,
-      legend image code/.code={%
-          \draw[#1] (0cm,-0.1cm) rectangle (0.6cm,0.1cm);
-        },
-      boxplot={
-          % Three boxplots for each column
-          draw position={1/4 + floor(\plotnumofactualtype/3) + 1/4*mod(\plotnumofactualtype,3)},
-          % Each plot takes up a quarter of the column
-          box extend=0.2,
-        },
-      % 1 unit in x controls the width:
-      x=2cm,
-      % ... and it means that we should describe intervals:
-      xtick={0,1,2,...,10},
-      x tick label as interval,
-      xticklabels={%
-      {Forked Moonlight\\{\tiny ideal/cpu/gpu}},%
-      {CRD\\{\tiny ideal/cpu/gpu}},%
-      {RDP\\{\tiny ideal/cpu/gpu}},%
-      {VNC\\{\tiny ideal/cpu/gpu}},%
-      },
-      x tick label style={
-          text width=2.5cm,
-          align=center
-        },
+        boxplot/draw direction=y,
+        ylabel={Time (ms)},
+        scale only axis,
+        height=8cm,
+        width=\textwidth,
+        ymin=0,ymax=250,
+        cycle list={{green!70!black},{red},{blue},{black}},
+        legend style={
+            legend pos=outer north east,
+            font=\small
+          },
+        legend cell align=left,
+        legend image code/.code={%
+            \draw[#1] (0cm,-0.1cm) rectangle (0.6cm,0.1cm);
+          },
+        boxplot={
+            % Three boxplots for each column
+            draw position={1/5 + floor(\plotnumofactualtype/4) + 1/5*fpumod(\plotnumofactualtype,4)},
+            % Each plot takes up a 15% of the column
+            box extend=0.15,
+          },
+        % 1 unit in x controls the width:
+        x=2cm,
+        % ... and it means that we should describe intervals:
+        xtick={0,1,2,...,10},
+        x tick label as interval,
+        xticklabels={%
+            {Forked Moonlight},%
+            {CRD},%
+            {RDP},%
+            {VNC},%
+          },
+        x tick label style={
+            text width=2.5cm,
+            align=center
+          },
       ]
 
       % Forked Moonlight
       \addplot
-      table[col sep=comma,x=Time difference] {Data/ideal/moonlight_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/ideal/moonlight_color_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stresscpu/moonlight_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stresscpu/moonlight_color_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stressgpu/moonlight_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stressgpu/moonlight_color_delay.csv};
+      \addplot
+      table[x expr=\coordindex+1, y index=0] {Data/stressboth/moonlight_color_delay.csv};
 
       % CRD
       \addplot
-      table[col sep=comma,x=Time difference] {Data/ideal/crd_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/ideal/crd_color_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stresscpu/crd_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stresscpu/crd_color_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stressgpu/crd_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stressgpu/crd_color_delay.csv};
+      \addplot
+      table[x expr=\coordindex+1, y index=0] {Data/stressboth/crd_color_delay.csv};
 
       % RDP
       \addplot
-      table[col sep=comma,x=Time difference] {Data/ideal/rdp_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/ideal/rdp_color_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stresscpu/rdp_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stresscpu/rdp_color_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stressgpu/rdp_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stressgpu/rdp_color_delay.csv};
+      \addplot
+      table[x expr=\coordindex+1, y index=0] {Data/stressboth/rdp_color_delay.csv};
 
       % VNC
       \addplot
-      table[col sep=comma,x=Time difference] {Data/ideal/vnc_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/ideal/vnc_color_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stresscpu/vnc_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stresscpu/vnc_color_delay.csv};
       \addplot
-      table[col sep=comma,x=Time difference] {Data/stressgpu/vnc_color_delay.csv};
+      table[x expr=\coordindex+1, y index=0] {Data/stressgpu/vnc_color_delay.csv};
+      \addplot
+      table[x expr=\coordindex+1, y index=0] {Data/stressboth/vnc_color_delay.csv};
 
-      \legend{Ideal,CPU stressed,GPU stressed}
+      \legend{Ideal,CPU stressed,GPU stressed,Both stressed}
     \end{axis}
   \end{tikzpicture}
-  \caption[Color Delay Data]{Time for client to render update to the screen.}
+  \caption[Color Delay Data]{Time for client to render update to the screen. n=400.}
   \label{fig:ColorDelay}
 \end{figure}
 
 This data demonstrates a similar but more extreme pattern to the input delay figure, with most application performing well under ideal conditions but struggling a little under high stress.
 The forked Moonlight implementation is able to render updates on the client device in under 70ms in nearly all cases, with an even spread regardless of the load of the host machine.
 CRD is able to render all updates in under 160ms while the host is idle, but struggles to keep up while under load.
-Again, CRD struggles the most while under CPU load, with the quickest update happening in just under 200ms, and the median update taking over a full second.
+Again, CRD struggles the most while under CPU load, with the quickest update happening in just under 180ms, and the median update taking over a full second.
 CRD performs a little better under GPU load, but still experiences much high delays with the median update taking over half of a second.
-Both of these values push the usability of the system as any kind of intensive program will bring the responsivity of the application to a crawl.
+Once both the CPU and the GPU are under load, the worst of both scenarios is realized as the median update taking nearly three quarters of a second.
+All three of these values push the usability of the system as any kind of intensive program will bring the responsivity of the application to a crawl.
 RDP again performs extremely well, with all render updates taking less than 50ms while under ideal conditions or GPU load, and all updates taking less that 70ms while under full CPU load.
 VNC is again the slowest and most inconsistent application, with all conditions resulting in a frequent render delays of more than a quarter of a second.
 This makes VNC considerably less suitable for the task at hand.
@@ -278,52 +295,56 @@ Figure \ref{fig:ColorDelayLoss} shows the percentage of color changes not render
   \centering
   \begin{tikzpicture}
     \begin{axis}[
-      ylabel={Color changes not rendered (\%)},
-      scale only axis,
-      height=8cm,
-      width=\textwidth,
-      enlarge x limits=0.25,
-      ybar=2*\pgflinewidth,
-      bar width=14pt,
-      ymin=0,ymax=100,
-      cycle list={{black},{blue},{red}},
-      legend style={
-          legend pos=outer north east,
-          font=\small
-        },
-      legend cell align=left,
-      legend image code/.code={%
-          \draw[#1] (0cm,-0.1cm) rectangle (0.6cm,0.1cm);
-        },
-      % 1 unit in x controls the width:
-      x=2cm,
-      % ... and it means that we should describe intervals:
-      xtick={0,1,2,...,10},
-      % x tick label as interval,
-      xticklabels={%
-      {Forked Moonlight\\{\tiny ideal/cpu/gpu}},%
-      {CRD\\{\tiny ideal/cpu/gpu}},%
-      {RDP\\{\tiny ideal/cpu/gpu}},%
-      {VNC\\{\tiny ideal/cpu/gpu}},%
-      },
-      x tick label style={
-          text width=2.5cm,
-          align=center
-        },
+        ylabel={Color changes not rendered (\%)},
+        scale only axis,
+        height=8cm,
+        width=\textwidth,
+        enlarge x limits=0.25,
+        ybar=2*\pgflinewidth,
+        bar width=14pt,
+        ymin=0,ymax=100,
+        cycle list={{green!70!black},{red},{blue},{black}},
+        legend style={
+            legend pos=outer north east,
+            font=\small
+          },
+        legend cell align=left,
+        legend image code/.code={%
+            \draw[#1] (0cm,-0.1cm) rectangle (0.6cm,0.1cm);
+          },
+        % 1 unit in x controls the width:
+        x=2cm,
+        % ... and it means that we should describe intervals:
+        xtick={0,1,2,...,10},
+        % x tick label as interval,
+        xticklabels={%
+            {Forked Moonlight},%
+            {CRD},%
+            {RDP},%
+            {VNC},%
+          },
+        x tick label style={
+            text width=2.5cm,
+            align=center
+          },
       ]
-      \addplot[style={black,fill=black,mark=none}]
+
+      \addplot[style={green!70!black,fill=green!70!black,mark=none}]
       coordinates {(0, 0) (1,0) (2,0) (3,15.32)};
 
-      \addplot[style={blue,fill=blue,mark=none}]
+      \addplot[style={red,fill=red,mark=none}]
       coordinates {(0,0) (1,32.28) (2,0) (3,19.51)};
 
-      \addplot[style={red,fill=red,mark=none}]
+      \addplot[style={blue,fill=blue,mark=none}]
       coordinates {(0,0) (1,2.34) (2,0) (3,15.5)};
 
-      \legend{Ideal,CPU stressed,GPU stressed}
+      \addplot[style={black,fill=black,mark=none}]
+      coordinates {(0, 0) (1,34.65) (2,0) (3,39.83)};
+
+      \legend{Ideal,CPU stressed,GPU stressed, Both stressed}
     \end{axis}
   \end{tikzpicture}
-  \caption[Color Delay Loss Data]{Percentage of color changes not rendered.}
+  \caption[Color Delay Loss Data]{Percentage of color changes not rendered. n=400.}
   \label{fig:ColorDelayLoss}
 \end{figure}
 
