@@ -214,8 +214,21 @@ headsepline, % Uncomment to get a line under the header
 		\end{minipage}
 		\begin{minipage}[t]{0.4\textwidth}
 			\begin{flushright} \large
-				\emph{Supervisor:} \\
+				\emph{Director:} \\
 				\href{https://isearch.asu.edu/profile/3180015}{\supname} % Supervisor name - remove the \href bracket to remove the link  
+			\end{flushright}
+		\end{minipage}\\[.5cm]
+
+		\begin{minipage}[t]{0.8\textwidth}
+			\begin{flushright} \large
+				\emph{Second Reader:}\\
+				\href{https://isearch.asu.edu/profile/1232839/}{Ruben Acu\~{n}a}
+			\end{flushright}
+		\end{minipage}\\[.5cm]
+		\begin{minipage}[t]{0.8\textwidth}
+			\begin{flushright} \large
+				\emph{Third Reader:} \\
+				\href{https://isearch.asu.edu/profile/1625795}{Dr. Shawn Jordan}
 			\end{flushright}
 		\end{minipage}\\[3cm]
 
@@ -283,6 +296,9 @@ The price point of a powerful laptop is considerably higher compared to an equal
 
 In the case where someone already owns a desktop computer and must be mobile, instead of needing to purchase a second device at full price, it may be possible to develop a low-cost computer that has just enough power to connect to the existing desktop and run all processing there, using the mobile device only as a user interface.
 
+This thesis will explore the development of a custom PCB that utilizes a Raspberry Pi Computer Module 4, as well as the development of a fork of the Open Source project Moonlight to stream a host machine's screen to a remote client.
+This implementation will be compared against other existing remote desktop solutions to analyze it's performance and quality.
+
 
 \end{abstract}
 
@@ -292,7 +308,7 @@ In the case where someone already owns a desktop computer and must be mobile, in
 
 \begin{acknowledgements}
 	\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
-	I would like to express my graditude to my thesis director, Dr. Robert Heinrichs, and to each of my committee members, Professor Ruben Acu\~{n}a and Dr. Shawn Jordan, for their help in the development of this thesis.
+	I would like to express my graditude to my thesis director, Dr. Robert Heinrichs, and to each of my committee members, Ruben Acu\~{n}a and Dr. Shawn Jordan, for their help in the development of this thesis.
 	Without their guidance, I would not have been able to step so far outside of my comfort zone and learn about so many new topics to make this thesis happen.
 	I would also like to thank my friends and family who were always there to bounce ideas off of and inevitably tell me when I was trying to fit too many words into a single section.
 \end{acknowledgements}
@@ -313,6 +329,7 @@ In the case where someone already owns a desktop computer and must be mobile, in
 
 \begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
 	\addchaptertocentry{\abbrevname} % Add the Abbreviations to the table of contents
+	\negmedspace % Gets rid of weird extra space
 	\textbf{BOM} & \textbf{B}ill \textbf{O}f \textbf{M}aterials\\
 	\textbf{CM4} & Raspberry Pi \textbf{C}ompute \textbf{M}odule \textbf{4}\\
 	\textbf{CPU} & \textbf{C}entral \textbf{P}rocessing \textbf{U}nit\\

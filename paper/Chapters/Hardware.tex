@@ -10,10 +10,10 @@ The entirety of the hardware schematics and designs developed for this project a
 
 \section{Requirements}\label{sec:HardwareRequirements}
 
-This section will explain the different constraints taken into account while developing the hardware portion of this project.
+This section will explain the different constraints taken into account while developing the hardware portion of this thesis.
 First, the hardware must be performant enough to provide a positive user experience (\ref{subsec:HardwarePerformance}), and secondly the product must be cheap enough to justify it over similar alternatives (\ref{subsec:HardwareCost}).
 
-Due to the lack of preliminary studies or research into the topic of target audience for this project, the requirements laid out in this section are based on the author's own requirements and preferences.
+Since no specific studies regarding possible users of the system were conducted, the requirements laid out in this section are based on the author's own requirements and preferences.
 The requirements are constructed with the target user being someone who already has a working desktop computer and wishes to leverage it's power remotely without sacrificing the user experience.
 
 \subsection{Performance}\label{subsec:HardwarePerformance}
@@ -59,8 +59,9 @@ When starting to choose parts for the hardware, there are many difficult questio
 First and foremost, the hardware had to be built with the time and resources available for this project.
 Specifically, building a Single Board Computer from scratch would be completely infeasible, but the goal was also not to simply purchase an off the shelf SBC that was not tailored to the task at hand such as a traditional Raspberry Pi.
 Instead, a better suited solution would be to utilize a \emph{Raspberry Pi Compute Module 4 (CM4)} which has \enquote{The power of Raspberry Pi 4 in a compact form factor for deeply embedded applications} \cite{rpi_cm4}.
-Boasting an incredibly small size and streamlined I/O, there only way to communicate with the Compute Module was through two tiny mezzanine connectors as shown in Figure \ref{fig:rpi_cm4_mezzanine}.
-With no other pin outs for anything such as power, HDMI, or USB, everything had to be built on a custom Printed Circuit Board (PCB).
+As this perfectly lines up with the requirements for the project, this thesis will be built using the CM4.
+However, due to it's small size and deeply embedded nature, the only way to communicate with the Compute Module is through two tiny mezzanine connectors as shown in Figure \ref{fig:rpi_cm4_mezzanine}.
+With no other pin outs for anything such as power, HDMI, or USB, the rest of the hardware must be built on a custom Printed Circuit Board (PCB) that tailors the CM4 for this thesis.
 
 \begin{figure}[h]
   \centering

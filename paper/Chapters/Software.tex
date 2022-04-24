@@ -73,7 +73,7 @@ This is where the community project Moonlight steps in.
 
 By taking advantage of the Moonlight library briefly described in Section \ref{subsec:NvidiaShieldAndGameStream}, the previously described process is translated  into a usable programming interface.
 To accomplish this, a fork of the Moonlight project is created so the GameStream protocol can be leveraged in this thesis.
-With the fork, much of the code required to create the software solution is already provided, all that is left is to tweak the code to ease development for the \emph{ARM} architecture and to build a suite of testing tools that hook into Moonlight to extract statistics.
+With the fork, much of the code required to create the software solution is already provided, the next step is to build on top of the existing code to ease development for the \emph{ARM} architecture and to write a suite of testing tools that hook into Moonlight to extract statistics.
 
 
 \section{Developing for ARM}\label{sec:DevelopingForARM}
@@ -147,7 +147,7 @@ The first set of data is important to track the raw performance of the applicati
 These statistics provide insight into how performant the application is from a technical perspective.
 The following is a structure that was developed for this thesis to hold the statistics recorded over a session of connecting to a host computer.
 Corresponding code was written throughout the fork of the Moonlight application to populate this structure while a streaming session is running.
-The data recorded is discussed in Chapter \ref{Chapter6}.
+The data recorded is evaluated in Chapter \ref{Chapter6}.
 
 \begin{lstlisting}[style=customc,firstnumber=23,title=Excerpt from \emph{moonlight/src/video/stats.h}]
 typedef struct _VIDEO_STATS {

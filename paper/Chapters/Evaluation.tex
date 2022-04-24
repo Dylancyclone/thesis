@@ -4,7 +4,8 @@
 
 In order to evaluate the performance of the forked version of Moonlight developed for this paper, it must be tested against the other existing solutions.
 The testing methodology employed to ensure the accuracy of the testing is described in Section \ref{sec:TestingMethodology}.
-Then, the different results are evaluated and analyzed in Sections \ref{sec:ResponsivityAndLatency} and \ref{sec:Quality}.
+Then, the responsivity and latency of each solution is evaluated in Section \ref{sec:ResponsivityLatency}, and the quality of each solution's stream is evaluated in Section \ref{sec:Quality}.
+Then, the forked version of Moonlight is evaluated in real world scenarios in Section \ref{sec:RealWorldTesting}.
 Finally, the results are summarized and verdicts on each of the solutions' applicability to the research questions will be presented in Section \ref{sec:EvaluationSummary}.
 
 
@@ -35,12 +36,13 @@ For each test, the following steps are performed:
   \item Both the host and client computers are fully rebooted to ensure no other application is running.
   \item The host computer starts up a single browser window with the web page described in Section \ref{sec:DevelopingTestingAndMeasurementTools}.
   \item If the test calls for the CPU or the GPU to be stressed, the application \enquote{Blender} is started on the host machine, and a benchmark is performed for the CPU or the GPU.
-        This benchmark will run for longer than the duration of the test, and will keep the CPU or GPU at 100\% load for the entire duration of the benchmark.
-  \item Both devices start up their respective data collection tool that will record key-strokes and changes in the screen's color.
+        This benchmark will run for longer than the duration of the test, and will keep the CPU and/or GPU at 100\% load for the entire duration of the benchmark.
+  \item Both devices start up their respective data collection tool that will record keystrokes and changes in the screen's color.
   \item The client machine connects to the host computer using the application being tested.
-  \item The tester presses the \enquote{=} to begin the automated testing process.
-        Due to the wide variance in what the user can do using the software, it is nearly impossible to test real world scenarios.
-        Instead, the automated test simulates an active working environment by sending 400 keystrokes with a 500ms delay between inputs coupled with updating the entire screen for each keystroke to mimic high-intensity applications.
+  \item The tester presses the \enquote{=} key on the client machine to begin the automated testing process.
+        Due to the wide variance in what the user can do using the software, it is nearly impossible to test every possible real world scenario.
+        Instead, the automated test simulates an active working environment by sending a repeatable series of keystrokes that cause the entire screen to change colors to mimic high-intensity applications.
+        For consistent testing, 400 keystrokes are automatically sent with a 500ms delay between inputs.
   \item Once the trial is complete, both the client and the host computers close their data recording tools and the client ends the streaming session.
 \end{enumerate}
 
@@ -63,9 +65,10 @@ But the task of keeping two computer's internal clocks synchronized is not trivi
 Even after instructing the operating system to synchronize its clock with an internet time server, the two computers may still report different times.
 In some cases, the difference between the host and client computer's system time was noticed to be upwards of a full second after resynchronizing both clocks \cite{time.is}.
 This is partially accounted for in step \emph{6} of the above process, and the remaining inaccuracy can now be removed by subtracting the time difference between the when the client presses the button and the time the host executes that command.
+It is important to not subtract the entire round trip time of the input, as that is what is being testing in the following section, but rather just the time between when the client sends the input and when the host receives it.
 This ensures that any inaccuracies in each computer's internal clock will not impact the data.
 
-After the data is cleaned up, the data can be processed by matching each key-stroke and change in the screen's color detected by the client and host machines and calculating how much time elapsed between the events.
+After the data is cleaned up, the data can be processed by matching each keystroke and change in the screen's color detected by the client and host machines and calculating how much time elapsed between the events.
 This reveals the amount of delay the user experiences between when they press a key and when the host executes the command, and between when they press a key and can visually see the response.
 
 
@@ -76,12 +79,11 @@ Responsivity is defined as how quick the application responds to inputs and how 
 This is important for general user experience and applications where continuous input is required.
 This is also what is generally referred to when determining whether an application has a positive user experience, since a program that can take seconds to respond to the user begets lower productivity and a more frustrating experience.
 To analyze this, two points of data are recorded: First, the amount of time between when the client records a keystroke and when it is actually inputted on the host machine, and secondly, the amount of time between the host machine updating their screen and when the client actually displays that update.
-The first datum is generally referred to as the latency of the application, since even though each trial is done using the same network setup different programs may have different optimizations built in that reduce the time needed for the host to implement keystrokes made by the client.
+The first datum is generally referred to as the latency of the application, since even though each trial is done using the same network setup different solutions may have different optimizations built in that reduce the time needed for the host to implement keystrokes made by the client.
+This means that as the network delay is removed from the data, all that is left is the time that it takes the software on the host's machine to actually execute the input.
 Each of the following figures shows data over one trial for each category.
 Each trial consists of the client machine programmatically sending 400 keystrokes with 500ms between each input.
 Limitations in this data is discussed in Section \ref{sec:ConclusionLimitations}.
-Figure \ref{fig:InputDelay} shows the amount of time between the client and the host registering the keystroke under the different test conditions.
-
 \begin{figure}[h]
   \centering
   \begin{tikzpicture}
@@ -170,6 +172,7 @@ Figure \ref{fig:InputDelay} shows the amount of time between the client and the 
   \caption[Input Delay Data]{Time for host to press key from client. n=400.}
   \label{fig:InputDelay}
 \end{figure}
+Figure \ref{fig:InputDelay} shows the amount of time between the client and the host registering the keystroke under the different test conditions.
 
 Each application does a good job sending data from the client to the host in a timely manner, with the majority of keystrokes being realized within a tenth of a second of being pressed on the client machine.
 The forked Moonlight implementation keeps a latency under 20ms regardless of the load of the host machine, with more than 75\% of all keystrokes being realized within 10ms.
@@ -180,6 +183,7 @@ RDP has a similar results, with extremely low latency while idle or under GPU lo
 VNC has the highest variance, with no discernable affinity to any kind of load.
 This lines up with it's intended use described in Section \ref{subsec:VirtualNetworkComputing}, being the simplest and most straightforward method of remote desktop control without much focus on performance or security.
 That's not so say VNC is unusable or even difficult to use; latency of 140ms is still usable in all but the most precise situations.
+
 Though this is only one metric to consider, the other is the amount of time it take for the client to display the results of their input.
 This is recorded as the amount of time it takes between the host machine changing the color of it's screen and the client rendering the change.
 As noted before, the color of the host's screen changes with each input sent by the client, which occurs every 500ms for 400 keystrokes.
@@ -270,7 +274,7 @@ Figure \ref{fig:ColorDelay} shows the amount of time for each application under 
       \legend{Ideal,CPU stressed,GPU stressed,Both stressed}
     \end{axis}
   \end{tikzpicture}
-  \caption[Color Delay Data]{Time for client to render update to the screen. n=400.}
+  \caption[Color Delay Data]{Time for client to render update to the screen. Values over 250ms push the usability of the system. n=400.}
   \label{fig:ColorDelay}
 \end{figure}
 
@@ -291,7 +295,7 @@ This, often referred to as dropped frames, records how much data is lost when th
 A higher percentage results in a more choppy and difficult to use experience, with a 50\% loss meaning that 50\% of the updates sent by the host are not rendered by the client.
 Figure \ref{fig:ColorDelayLoss} shows the percentage of color changes not rendered by the client for each of the load conditions.
 
-\begin{figure}[t]
+\begin{figure}[h]
   \centering
   \begin{tikzpicture}
     \begin{axis}[
@@ -360,7 +364,12 @@ This is still in line with it's intended use of basic remote control, though it 
 \section{Quality}\label{sec:Quality}
 
 Apart from the performance of each application, the quality of the user experience must also be taken into account when considering each application.
-Each application will be assessed individually, and then compared in Section \ref{sec:EvaluationSummary}
+Each application will be assessed individually, and then compared in Section \ref{sec:EvaluationSummary}.
+Due to the closed nature of some of the protocols, only limited amounts of data could be extracted and compared.
+This prevents direct comparisons, but can still contribute to the understanding of the overall performance of the solution.
+
+\subsection{Moonlight}\label{subsec:QualityMoonlight}
+
 When analyzing the forked version of Moonlight, specific quantitative data described in Section \ref{sec:DevelopingTestingAndMeasurementTools} can be collected directly from the application while it is running.
 Once the streaming session concludes, the statistics are collated into human-readable numbers and presented in the console.
 What follows is an example output from one of the test streaming sessions:
@@ -375,8 +384,6 @@ Frames dropped by your network connection: 0.00%
 Average network latency: 1 ms (variance: 0 ms)
 Average decoding time: 4.27 ms
 Average rendering time (including monitor V-sync latency): 0.06 ms
-
-
 Total dropped frames: 0
 \end{lstlisting}
 
@@ -386,6 +393,8 @@ Taking into account the average frame decoding time of $4.27ms$ and the average 
 $(4.27ms+0.06ms) = 4.33ms < 16.\overline{66}ms = (\frac{1000ms}{60fps})$.
 It is also worth noting that while testing the streaming quality, there were very few visual artifacts while monitoring the screen.
 There were very few times where the screen appeared to be run through a compression filter, and it for the most part kept the visual fidelity of the host machine.
+
+\subsection{Chrome Remote Desktop}\label{subsec:QualityCRD}
 
 Chrome Remote Desktop also provides some quantitative data during streaming, which gives an insight into it's performance usage and speed. Figure \ref{fig:crdStats} shows screenshots of the stream during the most demanding test session.
 
@@ -431,11 +440,15 @@ This is a decent indication of the quality of the video stream over time, as the
 With the knowledge that CRD leverages the VP8 compression algorithm \cite{miniorange_chromoting}, it is possible to infer that as the quality goes down, the frames being sent contain less information about the current frame and instead more temporal data to construct the new frame from the previous frame.
 This is also seen with visual smudging on the client's screen as the stream slows down.
 
+\subsection{Remote Desktop Protocol}\label{subsec:QualityRDP}
+
 Microsoft's Remote Desktop Protocol does not provide quantitative data to analyze it's quality, but speaking from a user experience perspective, and considering the data provided in the previous section, RDP performed very well under each of the testing conditions.
 By dropping zero frames and visually keeping up with the host machine, it is clear that RDP works extremely well over a local network.
 Similar to Moonlight, there was very little loss of visual fidelity in the client's screen compared to the host's screen.
 However, noticing that the bandwidth usage can climb upwards of 10 Mb/s, such streaming may cause issues while attempting to access the host machine while outside of the local network \cite{rdp_bandwidth}.
 This will be further discussed in Section \ref{sec:ConclusionLimitations}.
+
+\subsection{Virtual Network Computing}\label{subsec:QualityVNC}
 
 VNC provides little in the form of quality statistics, but given it's performance and responsiveness discussed in the previous section, it is clear that the quality of the stream suffers heavily whenever the host is under load.
 As discussed in Section \ref{subsec:VirtualNetworkComputing}, VNC was never built to be a highly performant protocol.
@@ -443,14 +456,7 @@ The testing done for this paper really stretches the limits of the protocol and 
 
 \section{Real World Testing}\label{sec:RealWorldTesting}
 
-While the testing conducted in the previous two sections provide an overview of how each application performs under controlled conditions, testing in the real world provides better insight into how a user may experience the final product.
-Unfortunately, there are many limitations in how testing can be conducted in the real world.
-First and foremost, due to the closed nature of of the existing solutions, collecting data while using them in real-world scenarios is impossible while leveraging the tools from the previous sections.
-Because of the reliance on using exact and repeatable testing conditions, a dynamic test of each application is much more difficult to conduct without direct access to the performance of the program, all data that could be collected otherwise would amount to quantitative data subject to interpretation.
-However, because of the logging tools that were developed in Section \ref{sec:DevelopingTestingAndMeasurementTools}, it is possible to collect data from the forked version of moonlight that shows the performance of the application over an entire streaming session.
-While it is impossible to predict and exhaustively test what the user may try to do with the final product, it is possible to test common use cases and evaluate whether the streaming experience is satisfactory.
-
-\begin{figure}[t]
+\begin{figure}[!b]
   \centering
   \begin{subfigure}{1\textwidth}
     \centering
@@ -460,9 +466,16 @@ While it is impossible to predict and exhaustively test what the user may try to
     \centering
     \includegraphics[width=.5\linewidth]{Figures/realworld/kicadstats}
   \end{subfigure}
-  \caption[Streaming Electronics Design software]{Working on the PCB for this project using KiCad.}
+  \caption[Streaming Electronics Design software]{Working on the PCB for this thesis using KiCad.}
   \label{fig:RealWorldKicad}
 \end{figure}
+
+While the testing conducted in the previous two sections provide an overview of how each application performs under controlled conditions, testing in the real world provides better insight into how a user may experience the final product.
+Unfortunately, there are many limitations in how testing can be conducted in the real world.
+First and foremost, due to the closed nature of of the existing solutions, collecting data while using them in real-world scenarios is impossible while leveraging the tools from the previous sections.
+Because of the reliance on using exact and repeatable testing conditions, a dynamic test of each application is much more difficult to conduct without direct access to the performance of the program, all data that could be collected otherwise would amount to quantitative data subject to interpretation.
+However, because of the logging tools that were developed in Section \ref{sec:DevelopingTestingAndMeasurementTools}, it is possible to collect data from the forked version of moonlight that shows the performance of the application over an entire streaming session.
+While it is impossible to predict and exhaustively test what the user may try to do with the final product, it is possible to test common use cases and evaluate whether the streaming experience is satisfactory.
 
 The first use case that was tested was streaming KiCad to the client machine to inspect the PCB layout of the custom board (Figure \ref{fig:RealWorldKicad}).
 This was to test the ability to work with highly accurate CAD programs to ensure that the small client device could be used for technical work.
@@ -482,8 +495,6 @@ Frames dropped by your network connection: 0.00%
 Average network latency: 1 ms (variance: 0 ms)
 Average decoding time: 4.24 ms
 Average rendering time (including monitor V-sync latency): 0.06 ms
-
-
 Total dropped frames: 0
 \end{lstlisting}
 
@@ -517,8 +528,6 @@ Frames dropped by your network connection: 0.00%
 Average network latency: 1 ms (variance: 0 ms)
 Average decoding time: 4.26 ms
 Average rendering time (including monitor V-sync latency): 0.05 ms
-
-
 Total dropped frames: 0
 \end{lstlisting}
 
@@ -555,8 +564,6 @@ Frames dropped by your network connection: 0.06%
 Average network latency: 1 ms (variance: 0 ms)
 Average decoding time: 4.70 ms
 Average rendering time (including monitor V-sync latency): 0.05 ms
-
-
 Total dropped frames: 16
 \end{lstlisting}
 
@@ -595,8 +602,6 @@ Frames dropped by your network connection: 0.00%
 Average network latency: 1 ms (variance: 0 ms)
 Average decoding time: 4.27 ms
 Average rendering time (including monitor V-sync latency): 0.06 ms
-
-
 Total dropped frames: 0
 \end{lstlisting}
 
