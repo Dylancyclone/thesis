@@ -441,9 +441,171 @@ VNC provides little in the form of quality statistics, but given it's performanc
 As discussed in Section \ref{subsec:VirtualNetworkComputing}, VNC was never built to be a highly performant protocol.
 The testing done for this paper really stretches the limits of the protocol and pushes the use case of VNC to the extreme, but it is still worth looking into a common and widely used tool.
 
+\section{Real World Testing}\label{sec:RealWorldTesting}
+
+While the testing conducted in the previous two sections provide an overview of how each application performs under controlled conditions, testing in the real world provides better insight into how a user may experience the final product.
+Unfortunately, there are many limitations in how testing can be conducted in the real world.
+First and foremost, due to the closed nature of of the existing solutions, collecting data while using them in real-world scenarios is impossible while leveraging the tools from the previous sections.
+Because of the reliance on using exact and repeatable testing conditions, a dynamic test of each application is much more difficult to conduct without direct access to the performance of the program, all data that could be collected otherwise would amount to quantitative data subject to interpretation.
+However, because of the logging tools that were developed in Section \ref{sec:DevelopingTestingAndMeasurementTools}, it is possible to collect data from the forked version of moonlight that shows the performance of the application over an entire streaming session.
+While it is impossible to predict and exhaustively test what the user may try to do with the final product, it is possible to test common use cases and evaluate whether the streaming experience is satisfactory.
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}{1\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{Figures/realworld/kicad}
+  \end{subfigure}
+  \begin{subfigure}{1\textwidth}
+    \centering
+    \includegraphics[width=.5\linewidth]{Figures/realworld/kicadstats}
+  \end{subfigure}
+  \caption[Streaming Electronics Design software]{Working on the PCB for this project using KiCad.}
+  \label{fig:RealWorldKicad}
+\end{figure}
+
+The first use case that was tested was streaming KiCad to the client machine to inspect the PCB layout of the custom board (Figure \ref{fig:RealWorldKicad}).
+This was to test the ability to work with highly accurate CAD programs to ensure that the small client device could be used for technical work.
+The first thing that was noticed was that since the chosen screen for the client device was small, everything had to be zoomed in much further than normal to be comfortable.
+This is where the secondary HDMI output could be used to plug in a larger, more conventional monitor, but in the event the user did not have access to such a hardware, the small screen needed to be sufficient.
+Once zoomed in, KiCad was readable and usable to without any further compromise.
+The client's inputs were responsive and accurate enough for precise movements to be made without error and without the worry of needing to wait for the screen to catch up to render the changes.
+Once the five minute testing session was complete, the following statistics were recorded:
+
+\begin{lstlisting}[style=plaintext,title=Statistics recorded while streaming KiCad (Figure \ref{fig:RealWorldKicad})]
+Global Video Stats
+----------------------------------------------------------
+Incoming frame rate from network: 61.23 FPS
+Decoding frame rate: 61.23 FPS
+Rendering frame rate: 61.23 FPS
+Frames dropped by your network connection: 0.00%
+Average network latency: 1 ms (variance: 0 ms)
+Average decoding time: 4.24 ms
+Average rendering time (including monitor V-sync latency): 0.06 ms
+
+
+Total dropped frames: 0
+\end{lstlisting}
+
+These results are very similar to the results recorded in the previous sections, where the frame rate is able to be kept above 60 FPS throughout the test, and zero frames were dropped.
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}{1\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{Figures/realworld/ai}
+  \end{subfigure}
+  \begin{subfigure}{1\textwidth}
+    \centering
+    \includegraphics[width=.5\linewidth]{Figures/realworld/aistats}
+  \end{subfigure}
+  \caption[Streaming the training of an AI]{Programing while training an AI model.}
+  \label{fig:RealWorldAI}
+\end{figure}
+
+The next use case that was tested was programing while training an AI model (Figure \ref{fig:RealWorldAI}).
+While programming on it's own is not a very intensive process, and processes such as compiling can be done while the user isn't actively interacting with the computer, training an AI model can be a very time consuming process that may need to continue in the background while the user continues to do other work.
+As this scenario is extremely similar to the CPU stress test from Section \ref{sec:ResponsivityAndLatency}, the same results are expected.
+
+\begin{lstlisting}[style=plaintext,title=Statistics recorded while training an AI (Figure \ref{fig:RealWorldAI})]
+Global Video Stats
+----------------------------------------------------------
+Incoming frame rate from network: 62.05 FPS
+Decoding frame rate: 62.05 FPS
+Rendering frame rate: 62.05 FPS
+Frames dropped by your network connection: 0.00%
+Average network latency: 1 ms (variance: 0 ms)
+Average decoding time: 4.26 ms
+Average rendering time (including monitor V-sync latency): 0.05 ms
+
+
+Total dropped frames: 0
+\end{lstlisting}
+
+As with before, the stream remains performant and usable throughout the test.
+There was no point during the test that the stream started to struggle as the AI training process kept the CPU at 100\% usage.
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}{1\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{Figures/realworld/blender}
+  \end{subfigure}
+  \begin{subfigure}{1\textwidth}
+    \centering
+    \includegraphics[width=.5\linewidth]{Figures/realworld/blenderstats}
+  \end{subfigure}
+  \caption[Streaming a 3D modeling, animation, and rendering program]{Working on a blender animation while rendering the scene.}
+  \label{fig:RealWorldBlender}
+\end{figure}
+
+The next use case that was tested was streaming the 3D modeling, animation, and rendering program Blender (Figure \ref{fig:RealWorldBlender}).
+To test this, a demo scene provided for free by the Blender Foundation was loaded and edited in one window while being rendered from the camera's point of view in real time in another window \cite{BlenderDemoScene}.
+This put inconsistent strain on the computer as it constantly had to rerender the scene as changes were made.
+Whenever the scene was rendered to a reasonable resolution, Blender would automatically stop rendering to keep resource usage low, resulting in the CPU and GPU usage to bounce back and forth between high and low usage.
+This proved to be the most strenuous test of the application:
+
+\begin{lstlisting}[style=plaintext,title=Statistics recorded while streaming Blender (Figure \ref{fig:RealWorldBlender})]
+  Global Video Stats
+----------------------------------------------------------
+Incoming frame rate from network: 57.30 FPS
+Decoding frame rate: 57.30 FPS
+Rendering frame rate: 57.30 FPS
+Frames dropped by your network connection: 0.06%
+Average network latency: 1 ms (variance: 0 ms)
+Average decoding time: 4.70 ms
+Average rendering time (including monitor V-sync latency): 0.05 ms
+
+
+Total dropped frames: 16
+\end{lstlisting}
+
+This was the only test in which not all frames rendered successfully, though the majority 99.4\% of frames rendered as expected.
+In fact, due to the stream running at an average 57 FPS, the 0.06\% loss of frames was imperceivable during the test and only became known once the statistics were produced.
+During the test, the stream remained performant and stable.
+Though applications such as this are more difficult to use on a smaller screen, it was by no means unusable; and because of the minimal delay from the stream, there was no point during the test where it felt like the output of the tester's inputs were not visible as quick as they normally would.
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}{1\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{Figures/realworld/gamedev}
+  \end{subfigure}
+  \begin{subfigure}{1\textwidth}
+    \centering
+    \includegraphics[width=.5\linewidth]{Figures/realworld/gamedevstats}
+  \end{subfigure}
+  \caption[Streaming the development of a video game level]{Developing a video game level while inspecting it in game.}
+  \label{fig:RealWorldGameDev}
+\end{figure}
+
+The last use case that was tested was streaming the development of a video game level while inspecting in the game (Figure \ref{fig:RealWorldGameDev}).
+This was intended to be an general all-round stress test that would put the host under multiple kinds of stress at the same time.
+Since the host computer had to run not only the video game's development tools but also the game itself, the stream had to keep up with the precise nature of geometric level design as well as interacting with the game.
+During the test, the client machine always felt as though it was not compromising the experience of working on the host machine save for the small display; inputs in the development tools stayed precise and accurate, and interacting with the game was as smooth as playing on the host machine.
+Once the test concluded, the following statistics were recorded:
+
+\begin{lstlisting}[style=plaintext,title=Statistics recorded while streaming the development of a video game level (Figure \ref{fig:RealWorldGameDev})]
+Global Video Stats
+----------------------------------------------------------
+Incoming frame rate from network: 61.93 FPS
+Decoding frame rate: 61.93 FPS
+Rendering frame rate: 61.93 FPS
+Frames dropped by your network connection: 0.00%
+Average network latency: 1 ms (variance: 0 ms)
+Average decoding time: 4.27 ms
+Average rendering time (including monitor V-sync latency): 0.06 ms
+
+
+Total dropped frames: 0
+\end{lstlisting}
+
+As with the most of the previous tests, the stream kept a constant frame rate above 60 FPS and never dropped any frames.
+
+
 \section{Summary}\label{sec:EvaluationSummary}
 
-By combining the information from the previous two sections, a wholistic picture of the performance of each application can be drawn. Firstly, Virtual Network Computing works as a bare-bones method of connecting to a host machine from a client device in the simplest way possible, but struggles at keeping up with even mildly demanding tasks.
+By combining the information from the previous three sections, a wholistic picture of the performance of each application can be drawn. Firstly, Virtual Network Computing works as a bare-bones method of connecting to a host machine from a client device in the simplest way possible, but struggles at keeping up with even mildly demanding tasks.
 As seen in Figure \ref{fig:ColorDelayLoss}, VNC failed to provide a smooth experience for the user even in ideal conditions by simply not rendering updates to the screen in time for the next frame to be shown.
 This, combined with a slow response time and delayed inputs, causes a poor experience for the user when attempting to use demanding applications or anything that requires speed, making it unsuitable for the purposes of this paper.
 
