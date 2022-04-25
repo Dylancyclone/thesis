@@ -207,4 +207,10 @@ It's source in it's entirety follows:
 This is sufficient to change the color of the screen back and forth between easily distinguishable colors for the data loggers of both the client and the host to record.
 With both of these datasets recorded, the next step is to analyze the data and evaluate the performance of the application.
 
-\todoadvisor{Summary}
+
+\section{Summary}\label{sec:SoftwareSummary}
+
+In order to connect the client device to the host computer, a software solution had to be developed to compliment the hardware produced in the previous chapter.
+Instead of reinventing the wheel and attempting to build a solution from scratch, focus was turned towards Nvidia's GameStream protocol, which has proven itself to be a reliable and capable solution that fits the needs of this thesis.
+The open source project Moonlight has taken the closed source protocol and provides a usable API to build a custom client.
+A fork of Moonlight was made for this thesis, and work was done to ease the development of the project on the \emph{ARM} architecture, as well as to build a suite of testing tools to evaluate the application against the existing solutions.
