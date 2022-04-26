@@ -19,11 +19,11 @@
 
 \documentclass[
 11pt, % The default document font size, options: 10pt, 11pt, 12pt
-%oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
+oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
 english, % ngerman for German
 singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
 % draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
-% final, % Uncomment to enable final mode (hide todos)
+final, % Uncomment to enable final mode (hide todos)
 %nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
 %liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
 %toctotoc, % Uncomment to add the main table of contents to the table of contents
@@ -147,6 +147,8 @@ headsepline, % Uncomment to get a line under the header
 		\pgfmathfloatifapproxequalrel{\pgfmathresult}{#2}{\def\pgfmathresult{5}}{}%
 }
 
+\usepackage{chronosys} % Required for timelines
+
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
 %----------------------------------------------------------------------------------------
@@ -267,7 +269,7 @@ headsepline, % Uncomment to get a line under the header
 	\noindent Signed: Dylan Lathrum\\
 	\rule[0.5em]{25em}{0.5pt} % This prints a line for the signature
 
-	\noindent Date: 4/15/2022\\
+	\noindent Date: \today\\
 	\rule[0.5em]{25em}{0.5pt} % This prints a line to write the date
 \end{declaration}
 

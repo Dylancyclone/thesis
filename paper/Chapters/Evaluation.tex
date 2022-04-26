@@ -62,11 +62,33 @@ In order to ensure that the data is comparable, all extraneous factors must be r
 Namely, the network latency and difference in computer clocks must be removed.
 By keeping the host and client computers attached to the same network through ethernet, the network latency is minimized.
 But the task of keeping two computer's internal clocks synchronized is not trivial.
+
+\begin{figure}[h]
+  \startchronology[startyear=0,stopyear=10, height=0pt, dates=false, arrow=false, box=true]
+  \chronograduation[event][dateselevation=0pt]{11}
+
+  \chronoevent[date=false]{2}{Key is pressed on client}
+  \chronoevent[date=false,markdepth=35pt]{6}{Key is received by host}
+  \chronoevent[date=false]{8}{Key is pressed on host}
+
+  \chronoperiode[textstyle=\raggedleft\colorbox{cyan!50}, color=cyan, startdate=false, bottomdepth=5pt, topheight=10pt, textdepth=-15pt,stopdate=false]{2}{6}{Network Latency}
+  \chronoperiode[textstyle=\colorbox{green!50}, color=green, startdate=false, bottomdepth=5pt, topheight=10pt, textdepth=-15pt,stopdate=false]{6}{8}{Application Latency}
+  \chronoperiode[textstyle=\colorbox{orange!50}, color=orange, startdate=false, bottomdepth=0pt, topheight=5pt, textdepth=-40pt,stopdate=false]{2}{8}{Total Latency}
+
+  \stopchronology
+  \caption[Timeline of a keystroke event]{Timeline of a keystroke event}
+  \label{fig:KeystrokeTimeline}
+\end{figure}
+
 Even after instructing the operating system to synchronize its clock with an internet time server, the two computers may still report different times.
 In some cases, the difference between the host and client computer's system time was noticed to be upwards of a full second after resynchronizing both clocks \cite{time.is}.
-This is partially accounted for in step \emph{6} of the above process, and the remaining inaccuracy can now be removed by subtracting the time difference between the when the client presses the button and the time the host executes that command.
-It is important to not subtract the entire round trip time of the input, as that is what is being testing in the following section, but rather just the time between when the client sends the input and when the host receives it.
-This ensures that any inaccuracies in each computer's internal clock will not impact the data.
+This is partially accounted for in step \emph{6} of the above process, but the remaining inaccuracy must be subtracted away.
+Figure \ref{fig:KeystrokeTimeline} shows the timeline of a single keystroke event; after the client presses a key, it must first be sent and received by the host computer, and then the host must execute that input.
+The time that this process takes is the total latency of the input.
+For the purposes of evaluating the different applications, this delay must be split into the time it takes for the host to receive the input, called the network latency, and the time it takes for the host to actually execute the input, called the application latency.
+Because the data loggers record the exact time that the test begins on both the client and host machines, the two times can be subtracted from each other to determine the network latency at the beginning of the test.
+After recording the data, the total latency of each input recorded by the data loggers is subtracted by this value so that the time remaining is the application latency.
+This ensures a fair and consistent comparison between each of the applications so that any inaccuracies in each computer's internal clock or the network speed has no impact on the data, and the only delay is that which is introduced by the application itself.
 
 After the data is cleaned up, the data can be processed by matching each keystroke and change in the screen's color detected by the client and host machines and calculating how much time elapsed between the events.
 This reveals the amount of delay the user experiences between when they press a key and when the host executes the command, and between when they press a key and can visually see the response.
@@ -493,7 +515,7 @@ Once zoomed in, KiCad was readable and usable to without any further compromise.
 The client's inputs were responsive and accurate enough for precise movements to be made without error and without the worry of needing to wait for the screen to catch up to render the changes.
 Once the five minute testing session was complete, the following statistics were recorded:
 
-\vspace{3mm} % Get the header of the block onto the next page. This can be removed if formatting changes
+\vspace{15mm} % Get the header of the block onto the next page. This can be removed if formatting changes
 \begin{lstlisting}[style=plaintext,title=Statistics recorded while streaming KiCad (Figure \ref{fig:RealWorldKicad})]
 Global Video Stats
 ----------------------------------------------------------
