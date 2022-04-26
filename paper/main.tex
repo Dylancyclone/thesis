@@ -19,11 +19,11 @@
 
 \documentclass[
 11pt, % The default document font size, options: 10pt, 11pt, 12pt
-%oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
+% oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
 english, % ngerman for German
 singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
 % draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
-% final, % Uncomment to enable final mode (hide todos)
+final, % Uncomment to enable final mode (hide todos)
 %nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
 %liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
 %toctotoc, % Uncomment to add the main table of contents to the table of contents
@@ -136,6 +136,18 @@ headsepline, % Uncomment to get a line under the header
 \usepackage{pgfplots} % Required for the plots
 \usepgfplotslibrary{statistics}
 \pgfplotsset{compat=1.8}
+% Fix mod function bug
+% borrowed from <https://tex.stackexchange.com/a/145967/95441>
+\pgfmathdeclarefunction{fpumod}{2}{%
+		\pgfmathfloatdivide{#1}{#2}%
+		\pgfmathfloatint{\pgfmathresult}%
+		\pgfmathfloatmultiply{\pgfmathresult}{#2}%
+		\pgfmathfloatsubtract{#1}{\pgfmathresult}%
+		% replaced `0' by `5' to make it work for this problem
+		\pgfmathfloatifapproxequalrel{\pgfmathresult}{#2}{\def\pgfmathresult{5}}{}%
+}
+
+\usepackage{chronosys} % Required for timelines
 
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
@@ -204,8 +216,21 @@ headsepline, % Uncomment to get a line under the header
 		\end{minipage}
 		\begin{minipage}[t]{0.4\textwidth}
 			\begin{flushright} \large
-				\emph{Supervisor:} \\
+				\emph{Director:} \\
 				\href{https://isearch.asu.edu/profile/3180015}{\supname} % Supervisor name - remove the \href bracket to remove the link  
+			\end{flushright}
+		\end{minipage}\\[.5cm]
+
+		\begin{minipage}[t]{0.8\textwidth}
+			\begin{flushright} \large
+				\emph{Second Reader:}\\
+				\href{https://isearch.asu.edu/profile/1232839/}{Ruben Acu\~{n}a}
+			\end{flushright}
+		\end{minipage}\\[.5cm]
+		\begin{minipage}[t]{0.8\textwidth}
+			\begin{flushright} \large
+				\emph{Third Reader:} \\
+				\href{https://isearch.asu.edu/profile/1625795}{Dr. Shawn Jordan}
 			\end{flushright}
 		\end{minipage}\\[3cm]
 
@@ -244,7 +269,7 @@ headsepline, % Uncomment to get a line under the header
 	\noindent Signed: Dylan Lathrum\\
 	\rule[0.5em]{25em}{0.5pt} % This prints a line for the signature
 
-	\noindent Date: 4/15/2022\\
+	\noindent Date: \today\\
 	\rule[0.5em]{25em}{0.5pt} % This prints a line to write the date
 \end{declaration}
 
@@ -273,6 +298,9 @@ The price point of a powerful laptop is considerably higher compared to an equal
 
 In the case where someone already owns a desktop computer and must be mobile, instead of needing to purchase a second device at full price, it may be possible to develop a low-cost computer that has just enough power to connect to the existing desktop and run all processing there, using the mobile device only as a user interface.
 
+This thesis will explore the development of a custom PCB that utilizes a Raspberry Pi Computer Module 4, as well as the development of a fork of the Open Source project Moonlight to stream a host machine's screen to a remote client.
+This implementation will be compared against other existing remote desktop solutions to analyze it's performance and quality.
+
 
 \end{abstract}
 
@@ -282,7 +310,7 @@ In the case where someone already owns a desktop computer and must be mobile, in
 
 \begin{acknowledgements}
 	\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
-	I would like to express my graditude to my thesis director, Dr. Robert Heinrichs, and to each of my committee members, Professor Ruben Acu\~{n}a and Dr. Shawn Jordan, for their help in the development of this thesis.
+	I would like to express my graditude to my thesis director, Dr. Robert Heinrichs, and to each of my committee members, Ruben Acu\~{n}a and Dr. Shawn Jordan, for their help in the development of this thesis.
 	Without their guidance, I would not have been able to step so far outside of my comfort zone and learn about so many new topics to make this thesis happen.
 	I would also like to thank my friends and family who were always there to bounce ideas off of and inevitably tell me when I was trying to fit too many words into a single section.
 \end{acknowledgements}
@@ -303,6 +331,7 @@ In the case where someone already owns a desktop computer and must be mobile, in
 
 \begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
 	\addchaptertocentry{\abbrevname} % Add the Abbreviations to the table of contents
+	\negmedspace % Gets rid of weird extra space
 	\textbf{BOM} & \textbf{B}ill \textbf{O}f \textbf{M}aterials\\
 	\textbf{CM4} & Raspberry Pi \textbf{C}ompute \textbf{M}odule \textbf{4}\\
 	\textbf{CPU} & \textbf{C}entral \textbf{P}rocessing \textbf{U}nit\\

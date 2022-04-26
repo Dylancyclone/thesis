@@ -2,6 +2,7 @@
 
 \label{Chapter4}
 
+As discussed in Chapter \ref{Chapter2}, there currently is no commercial solution for a cheap, portable device that can leverage the power of a remote computer; hence, this thesis will investigate the development of such a solution.
 There are a lot of factors that go into designing and building an electrical system that fits the needs for this project.
 This process begins by outlining the requirements in Section \ref{sec:HardwareRequirements}, followed by describing the process and methodology of choosing parts in Section \ref{sec:ChoosingParts}.
 Then, the feasibility of prototyping such as system is discussed in Section \ref{sec:Prototyping}, and finally the system is designed and manufactured in Sections \ref{sec:DesigningThePCB} and \ref{sec:ManufacturingThePCB} respectively.
@@ -10,10 +11,10 @@ The entirety of the hardware schematics and designs developed for this project a
 
 \section{Requirements}\label{sec:HardwareRequirements}
 
-This section will explain the different constraints taken into account while developing the hardware portion of this project.
+This section will explain the different constraints taken into account while developing the hardware portion of this thesis.
 First, the hardware must be performant enough to provide a positive user experience (\ref{subsec:HardwarePerformance}), and secondly the product must be cheap enough to justify it over similar alternatives (\ref{subsec:HardwareCost}).
 
-Due to the lack of preliminary studies or research into the topic of target audience for this project, the requirements laid out in this section are based on the author's own requirements and preferences.
+Since no specific studies regarding possible users of the system were conducted, the requirements laid out in this section are based on the author's own requirements and preferences.
 The requirements are constructed with the target user being someone who already has a working desktop computer and wishes to leverage it's power remotely without sacrificing the user experience.
 
 \subsection{Performance}\label{subsec:HardwarePerformance}
@@ -59,8 +60,9 @@ When starting to choose parts for the hardware, there are many difficult questio
 First and foremost, the hardware had to be built with the time and resources available for this project.
 Specifically, building a Single Board Computer from scratch would be completely infeasible, but the goal was also not to simply purchase an off the shelf SBC that was not tailored to the task at hand such as a traditional Raspberry Pi.
 Instead, a better suited solution would be to utilize a \emph{Raspberry Pi Compute Module 4 (CM4)} which has \enquote{The power of Raspberry Pi 4 in a compact form factor for deeply embedded applications} \cite{rpi_cm4}.
-Boasting an incredibly small size and streamlined I/O, there only way to communicate with the Compute Module was through two tiny mezzanine connectors as shown in Figure \ref{fig:rpi_cm4_mezzanine}.
-With no other pin outs for anything such as power, HDMI, or USB, everything had to be built on a custom Printed Circuit Board (PCB).
+Preliminary investigations showed that the CM4 is a promising candidate for the system and hence was chosen to be the starting point for the development of this project.
+It's most important characteristic to keep in mind is due to it's small size and deeply embedded nature, the only way to communicate with the Compute Module is through two tiny mezzanine connectors as shown in Figure \ref{fig:rpi_cm4_mezzanine}.
+With no other pin outs for anything such as power, HDMI, or USB, the rest of the hardware must be built on a custom Printed Circuit Board (PCB) that tailors the CM4 for this thesis.
 
 \begin{figure}[h]
   \centering
@@ -168,7 +170,7 @@ In doing so, the board can still be powered and it's other features can be teste
   %Height instead of width because the image is rotated
   \includegraphics[height=0.9\textwidth,angle=90]{Figures/smt_breakout}
   \captionsetup{width=.8\linewidth}
-  \caption[SMD Breakout Board]{A breakout board similar to what would be needer for the USB controller used on the custom PCB}
+  \caption[SMD Breakout Board]{A breakout board similar to what would be needed for the USB controller used on the custom PCB}
   \label{fig:smt_breakout}
 \end{figure}
 
@@ -376,7 +378,17 @@ After delivering the board, stencil, and parts, the second board was assembled.
 
 \subsection{Second Attempt}\label{subsec:Manufacturing2}
 
-\begin{figure}[b]
+The second board was assembled mostly successfully, and allowed the first stage of testing to begin.
+The only issue apart from some ports being too close together with real-world cables was one component having the wrong footprint on the board.
+Unfortunately, the component \emph{U2 (MCP73871-2CCI\_ML)}, is described as using the \emph{QFN-20-1EP\_4x4mm} footprint in its datasheet \cite{MCP73871-2CCI/ML-ND_datasheet}, but actually uses a revised version of the footprint, shown in Figure \ref{fig:FootprintQFN204x4}.
+This discrepancy meant that that component could not be soldered, and it's associated circuit would not function properly.
+In this case, the component was a part of the battery charging circuit, causing the entire primary power supply to be unusable.
+Thankfully, as described in Section \ref{sec:Prototyping}, the secondary method of powering the board could be used to test the remaining features of the board.
+After making the necessary fixes, a second round of five PCB boards and a stencil was ordered.
+Because there was still enough components to assemble three more boards, and no components needed to be changed, no more components were ordered at this stage.
+Once the boards were delivered, the revised board was again sent to be professionally assembled.
+
+\begin{figure}[t]
   \centering
   \begin{subfigure}{.5\textwidth}
     \centering
@@ -394,19 +406,9 @@ After delivering the board, stencil, and parts, the second board was assembled.
   \label{fig:FootprintQFN204x4}
 \end{figure}
 
-The second board was assembled mostly successfully, and allowed the first stage of testing to begin.
-The only issue apart from some ports being too close together with real-world cables was one component having the wrong footprint on the board.
-Unfortunately, the component \emph{U2 (MCP73871-2CCI\_ML)}, is described as using the \emph{QFN-20-1EP\_4x4mm} footprint in its datasheet \cite{MCP73871-2CCI/ML-ND_datasheet}, but actually uses a revised version of the footprint, shown in Figure \ref{fig:FootprintQFN204x4}.
-This discrepancy meant that that component could not be soldered, and it's associated circuit would not function properly.
-In this case, the component was a part of the battery charging circuit, causing the entire primary power supply to be unusable.
-Thankfully, as described in Section \ref{sec:Prototyping}, the secondary method of powering the board could be used to test the remaining features of the board.
-After making the necessary fixes, a second round of five PCB boards and a stencil was ordered.
-Because there was still enough components to assemble three more boards, and no components needed to be changed, no more components were ordered at this stage.
-Once the boards were delivered, the revised board was again sent to be professionally assembled.
-
 \subsection{Third Attempt}\label{subsec:Manufacturing3}
 
-\begin{figure}[t]
+\begin{figure}[!b]
   \centering
   \includegraphics[width=0.8\textwidth]{Figures/pcb/crops/final}
   \caption[Assembled PCB]{The assembled PCB}
@@ -419,3 +421,12 @@ In particular, USB devices plugged into any of the ports on the board were able 
 Thankfully, this did not prevent testing of the board from being completed, but it did stop the board from being considered a final complete product.
 This board could still be used for testing by connecting peripherals such as the keyboard and mouse through bluetooth and powering the screen through USB.
 Figure \ref{fig:AssembledPCB} shows the final assembled board, with the final PCB layouts in Figures \ref{app:pcb_layout_front} and \ref{app:pcb_layout_back}.
+
+
+\section{Summary}\label{sec:HardwareSummary}
+
+In order to produce a hardware device capable of fitting the needs of the project, a careful balance between power and cost had to be found.
+The Raspberry Pi Compute Module 4 offered enough power to power the project while maintaining a low cost and slim profile that enabled it to fit in a small mobile device.
+Once the CM4 was chosen, a custom PCB had to be designed and manufactured to tailor the Compute Module to the needs of the project.
+This included choosing compatible electronic components, designing a board that provided the necessary functionality, and developing multiple iterations of the board to fix problems as they arose.
+After three iterations, a board was finally produced that could be used to develop the software portion of the thesis.
