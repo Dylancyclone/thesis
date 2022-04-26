@@ -274,7 +274,7 @@ Figure \ref{fig:ColorDelay} shows the amount of time for each application under 
       \legend{Ideal,CPU stressed,GPU stressed,Both stressed}
     \end{axis}
   \end{tikzpicture}
-  \caption[Color Delay Data]{Time for client to render update to the screen. Values over 250ms push the usability of the system. n=400.}
+  \caption[Color Delay Data]{Time for client to render update to the screen. Values over 250ms indicate a poorly performing system. n=400.}
   \label{fig:ColorDelay}
 \end{figure}
 
@@ -456,7 +456,22 @@ The testing done for this paper really stretches the limits of the protocol and 
 
 \section{Real World Testing}\label{sec:RealWorldTesting}
 
-\begin{figure}[!b]
+While the testing conducted in the previous two sections provide an overview of how each application performs under controlled conditions, testing in the real world provides better insight into how a user may experience the final product.
+Unfortunately, there are many limitations in how testing can be conducted in the real world.
+First and foremost, due to the closed nature of of the existing solutions, collecting data while using them in real-world scenarios is impossible while leveraging the tools from the previous sections.
+Because of the reliance on using exact and repeatable testing conditions, a dynamic test of each application is much more difficult to conduct without direct access to the performance of the program, all data that could be collected otherwise would amount to quantitative data subject to interpretation.
+However, because of the logging tools that were developed in Section \ref{sec:DevelopingTestingAndMeasurementTools}, it is possible to collect data from the forked version of Moonlight that shows the performance of the application over an entire streaming session.
+While it is impossible to predict and exhaustively test what the user may try to do with the final product, it is possible to test common use cases and evaluate whether the streaming experience is satisfactory.
+
+Each of the following subsections aims to represent a different use case that may be encountered in the real world.
+First, the project is tested with a CAD application in Section \ref{subsec:RealWorldKiCad}, representing precise graphical design using software that may struggle to run on portable hardware.
+Then, to represent a programming environment while utilizing the power of the host, the project is tested while training an AI model in Section \ref{subsec:RealWorldAI}.
+Then, the project is tested while using Blender to edit and render a 3D scene simultaneously to represent artistic workloads and GPU accelerated rendering in Section \ref{subsec:RealWorldBlender}.
+Finally, to represent an all around stressful situation for the host, the project is tested while developing a level for a video game while inspecting it in-game in Section \ref{subsec:RealWorldVideoGame}.
+
+\subsection{CAD}\label{subsec:RealWorldKiCad}
+
+\begin{figure}[t]
   \centering
   \begin{subfigure}{1\textwidth}
     \centering
@@ -470,13 +485,6 @@ The testing done for this paper really stretches the limits of the protocol and 
   \label{fig:RealWorldKicad}
 \end{figure}
 
-While the testing conducted in the previous two sections provide an overview of how each application performs under controlled conditions, testing in the real world provides better insight into how a user may experience the final product.
-Unfortunately, there are many limitations in how testing can be conducted in the real world.
-First and foremost, due to the closed nature of of the existing solutions, collecting data while using them in real-world scenarios is impossible while leveraging the tools from the previous sections.
-Because of the reliance on using exact and repeatable testing conditions, a dynamic test of each application is much more difficult to conduct without direct access to the performance of the program, all data that could be collected otherwise would amount to quantitative data subject to interpretation.
-However, because of the logging tools that were developed in Section \ref{sec:DevelopingTestingAndMeasurementTools}, it is possible to collect data from the forked version of moonlight that shows the performance of the application over an entire streaming session.
-While it is impossible to predict and exhaustively test what the user may try to do with the final product, it is possible to test common use cases and evaluate whether the streaming experience is satisfactory.
-
 The first use case that was tested was streaming KiCad to the client machine to inspect the PCB layout of the custom board (Figure \ref{fig:RealWorldKicad}).
 This was to test the ability to work with highly accurate CAD programs to ensure that the small client device could be used for technical work.
 The first thing that was noticed was that since the chosen screen for the client device was small, everything had to be zoomed in much further than normal to be comfortable.
@@ -485,6 +493,7 @@ Once zoomed in, KiCad was readable and usable to without any further compromise.
 The client's inputs were responsive and accurate enough for precise movements to be made without error and without the worry of needing to wait for the screen to catch up to render the changes.
 Once the five minute testing session was complete, the following statistics were recorded:
 
+\vspace{3mm} % Get the header of the block onto the next page. This can be removed if formatting changes
 \begin{lstlisting}[style=plaintext,title=Statistics recorded while streaming KiCad (Figure \ref{fig:RealWorldKicad})]
 Global Video Stats
 ----------------------------------------------------------
@@ -513,6 +522,8 @@ These results are very similar to the results recorded in the previous sections,
   \caption[Streaming the training of an AI]{Programing while training an AI model.}
   \label{fig:RealWorldAI}
 \end{figure}
+
+\subsection{AI Training}\label{subsec:RealWorldAI}
 
 The next use case that was tested was programing while training an AI model (Figure \ref{fig:RealWorldAI}).
 While programming on it's own is not a very intensive process, and processes such as compiling can be done while the user isn't actively interacting with the computer, training an AI model can be a very time consuming process that may need to continue in the background while the user continues to do other work.
@@ -547,6 +558,8 @@ There was no point during the test that the stream started to struggle as the AI
   \caption[Streaming a 3D modeling, animation, and rendering program]{Working on a blender animation while rendering the scene.}
   \label{fig:RealWorldBlender}
 \end{figure}
+
+\subsection{3D Rendering}\label{subsec:RealWorldBlender}
 
 The next use case that was tested was streaming the 3D modeling, animation, and rendering program Blender (Figure \ref{fig:RealWorldBlender}).
 To test this, a demo scene provided for free by the Blender Foundation was loaded and edited in one window while being rendered from the camera's point of view in real time in another window \cite{BlenderDemoScene}.
@@ -585,6 +598,8 @@ Though applications such as this are more difficult to use on a smaller screen, 
   \caption[Streaming the development of a video game level]{Developing a video game level while inspecting it in game.}
   \label{fig:RealWorldGameDev}
 \end{figure}
+
+\subsection{Video Game Development}\label{subsec:RealWorldVideoGame}
 
 The last use case that was tested was streaming the development of a video game level while inspecting in the game (Figure \ref{fig:RealWorldGameDev}).
 This was intended to be an general all-round stress test that would put the host under multiple kinds of stress at the same time.
@@ -627,4 +642,5 @@ However, because of these drawbacks, RDP is not suitable for every application.
 
 Finally, Moonlight proves to be a high-performant solution that isn't limited by the host's CPU or GPU being under stress.
 Each test resulted in highly similar results, and while it does on average have slightly higher response times compared to RDP (Figures \ref{fig:InputDelay} and \ref{fig:ColorDelay}), it only falls behind by 5-10ms -- quicker than the blink of an eye.
-By not dropping any frames, and numerically proving it's ability to keep the stream above 60 frames per second, Moonlight proves to be a great solution for streaming demanding applications to a remote client without compromising its usability.
+Moonlight also provided an uncompromising experience throughout each of the real world use cases.
+By dropping zero frames across seven of the eight tests conducted for this thesis, and only 0.06\% of frames on the final test, and numerically proving it's ability to keep the stream above 60 frames per second in nearly every situation, Moonlight proves to be a great solution for streaming demanding applications to a remote client without compromising its usability.

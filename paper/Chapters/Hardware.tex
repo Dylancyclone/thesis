@@ -60,8 +60,8 @@ When starting to choose parts for the hardware, there are many difficult questio
 First and foremost, the hardware had to be built with the time and resources available for this project.
 Specifically, building a Single Board Computer from scratch would be completely infeasible, but the goal was also not to simply purchase an off the shelf SBC that was not tailored to the task at hand such as a traditional Raspberry Pi.
 Instead, a better suited solution would be to utilize a \emph{Raspberry Pi Compute Module 4 (CM4)} which has \enquote{The power of Raspberry Pi 4 in a compact form factor for deeply embedded applications} \cite{rpi_cm4}.
-As this perfectly lines up with the requirements for the project, this thesis will be built using the CM4.
-However, due to it's small size and deeply embedded nature, the only way to communicate with the Compute Module is through two tiny mezzanine connectors as shown in Figure \ref{fig:rpi_cm4_mezzanine}.
+Preliminary investigations showed that the CM4 is a promising candidate for the system and hence was chosen to be the starting point for the development of this project.
+It's most important characteristic to keep in mind is due to it's small size and deeply embedded nature, the only way to communicate with the Compute Module is through two tiny mezzanine connectors as shown in Figure \ref{fig:rpi_cm4_mezzanine}.
 With no other pin outs for anything such as power, HDMI, or USB, the rest of the hardware must be built on a custom Printed Circuit Board (PCB) that tailors the CM4 for this thesis.
 
 \begin{figure}[h]
@@ -170,7 +170,7 @@ In doing so, the board can still be powered and it's other features can be teste
   %Height instead of width because the image is rotated
   \includegraphics[height=0.9\textwidth,angle=90]{Figures/smt_breakout}
   \captionsetup{width=.8\linewidth}
-  \caption[SMD Breakout Board]{A breakout board similar to what would be needer for the USB controller used on the custom PCB}
+  \caption[SMD Breakout Board]{A breakout board similar to what would be needed for the USB controller used on the custom PCB}
   \label{fig:smt_breakout}
 \end{figure}
 
@@ -427,5 +427,6 @@ Figure \ref{fig:AssembledPCB} shows the final assembled board, with the final PC
 
 In order to produce a hardware device capable of fitting the needs of the project, a careful balance between power and cost had to be found.
 The Raspberry Pi Compute Module 4 offered enough power to power the project while maintaining a low cost and slim profile that enabled it to fit in a small mobile device.
-One the CM4 was chosen, a custom PCB had to be designed and manufactured to tailor the Compute module to the needs of the project.
+Once the CM4 was chosen, a custom PCB had to be designed and manufactured to tailor the Compute Module to the needs of the project.
 This included choosing compatible electronic components, designing a board that provided the necessary functionality, and developing multiple iterations of the board to fix problems as they arose.
+After three iterations, a board was finally produced that could be used to develop the software portion of the thesis.
