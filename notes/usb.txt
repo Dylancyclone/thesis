@@ -1,0 +1,16 @@
+One of the problems remaining with the board is the USB controller failing to transfer data. Power works fine, but data is having problems that are being debugged.
+The evaluation board for the chip is found here:
+https://ww1.microchip.com/downloads/en/DeviceDoc/evb2504.pdf
+BOM:
+https://ww1.microchip.com/downloads/en/DeviceDoc/evb2504bom.pdf
+https://www.microchip.com/en-us/product/USB2504#document-table
+Datasheet:
+https://ww1.microchip.com/downloads/en/DeviceDoc/00002250A.pdf
+
+In order to fully debug the chip, the evaluation board was going to be replicated as close as possible in case some of the components really are so sensitive and they need to be exact.
+
+
+Parts:
+https://www.digikey.com/en/products/detail/taiyo-yuden/GMK325B7475MNHTR/6563119
+https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL31B475KAHNFNE/3888835
+https://www.digikey.com/en/products/detail/kemet/C1206C270K5GAC7800/2215581
