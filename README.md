@@ -4,6 +4,10 @@
 
 ## [READ THE PAPER HERE](./paper/small.pdf)
 
+(Alternatively, [see it on asu.edu](https://keep.lib.asu.edu/items/165594))
+
+Watch a timelapse of the paper here: https://youtu.be/VJ2HCxnmA_Y
+
 ## Abstract
 
 With the recent focus of attention towards remote work and mobile computing, the possibility of taking a powerful workstation wherever needed is enticing.
